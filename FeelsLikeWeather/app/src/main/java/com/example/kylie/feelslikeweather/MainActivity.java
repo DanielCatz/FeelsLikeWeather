@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.kylie.feelslikeweather.rest.ApiClient;
 
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ApiClient.getCurrentWeather("98007","us");
+                TextView display  = (TextView) findViewById(R.id.txt_main);
+                display.setText("called");
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }

@@ -1,7 +1,7 @@
 package com.example.kylie.feelslikeweather.rest;
 
+import com.example.kylie.feelslikeweather.models.CurrentWeather;
 import com.example.kylie.feelslikeweather.utitlity.Print;
-import com.example.kylie.feelslikeweather.model.Weather;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -54,16 +54,16 @@ public class ApiClient {
 
     public static void getCurrentWeather(String zip,String countryCode){
 zip = zip+","+countryCode;
-        REST_CLIENT.getCurrentWeather(zip,KEY).enqueue(new Callback<Weather>() {
+        REST_CLIENT.getCurrentWeather(zip,KEY).enqueue(new Callback<CurrentWeather>() {
                         @Override
-                       public void onResponse(Call<Weather> call, Response<Weather> response) {
+                       public void onResponse(Call<CurrentWeather> call, Response<CurrentWeather> response) {
                             Print.out(response.code() + ":" + response.message() + " Location : ");
                             Print.out(response.code() + ":" + response.message());
                             Print.out(response.body().getName());
                        }
 
                        @Override
-                       public void onFailure(Call<Weather> call, Throwable t) {
+                       public void onFailure(Call<CurrentWeather> call, Throwable t) {
                            Print.out("failed");
                        }
                    }
