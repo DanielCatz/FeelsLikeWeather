@@ -1,8 +1,10 @@
 package com.example.kylie.feelslikeweather.presenters;
 
+import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
 import com.example.kylie.feelslikeweather.models.pojos.CurrentWeather;
 import com.example.kylie.feelslikeweather.rest.WeatherService;
 import com.example.kylie.feelslikeweather.screens.CurrentWeatherScreen;
+import com.example.kylie.feelslikeweather.utitlity.Print;
 
 import rx.Observable;
 import rx.Observer;
@@ -53,14 +55,15 @@ public class MainActivityPresenter{
     }
 
 
-    public void getWeatherForcast(){
+    public void getWeatherForecast(){
+        Print.out("getforecast");
 
-        String zip = "98007,US";
         String key = weatherService.getKey();
-        //Observable<CurrentWeather> call = weatherService.getAPI().getCurrentWeather(zip,key);
-        Observable<CurrentWeather> call = (Observable<CurrentWeather>)
-                weatherService.getPreparedObservable(weatherService.getAPI().getCurrentWeather(zip,key), CurrentWeather.class, true, false);
-        subscription = call.subscribe(new Observer<CurrentWeather>() {
+        String latLong = weatherService.getLatLong();
+        Print.out(key +"+" + latLong);
+        Observable<DarkSkyForecast> call = (Observable<DarkSkyForecast>)
+                weatherService.getPreparedObservable(weatherService.getAPI().getWeatherForecast(key,latLong), DarkSkyForecast.class, true, false);
+        subscription = call.subscribe(new Observer<DarkSkyForecast>() {
                                           @Override
                                           public void onCompleted() {
 
@@ -68,12 +71,16 @@ public class MainActivityPresenter{
 
                                           @Override
                                           public void onError(Throwable e) {
+
+                                              Print.out(e.getMessage());
                                               screen.failedCall();
                                           }
 
                                           @Override
-                                          public void onNext(CurrentWeather currentWeather) {
-                                              screen.refreshCurrentWeather(currentWeather.getName());
+                                          public void onNext(DarkSkyForecast forecast) {
+                                              Print.out("forecast");
+
+                                              screen.refreshCurrentWeather(forecast.getCurrently().getTemperature().toString());
                                               //TODO check here https://kmangutov.wordpress.com/2015/03/28/android-mvp-consuming-restful-apis/
                                           }
                                       }

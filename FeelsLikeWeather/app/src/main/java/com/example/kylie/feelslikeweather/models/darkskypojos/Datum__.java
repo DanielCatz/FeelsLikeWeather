@@ -26,16 +26,16 @@ public class Datum__ {
     private Double moonPhase;
     @SerializedName("precipIntensity")
     @Expose
-    private Integer precipIntensity;
+    private Double precipIntensity;
     @SerializedName("precipIntensityMax")
     @Expose
-    private Integer precipIntensityMax;
+    private Double precipIntensityMax;
     @SerializedName("precipIntensityMaxTime")
     @Expose
-    private Integer precipIntensityMaxTime;
+    private Double precipIntensityMaxTime;
     @SerializedName("precipProbability")
     @Expose
-    private Integer precipProbability;
+    private Double precipProbability;
     @SerializedName("precipType")
     @Expose
     private String precipType;
@@ -80,7 +80,7 @@ public class Datum__ {
     private Double visibility;
     @SerializedName("cloudCover")
     @Expose
-    private Integer cloudCover;
+    private Double cloudCover;
     @SerializedName("pressure")
     @Expose
     private Double pressure;
@@ -136,35 +136,35 @@ public class Datum__ {
         this.moonPhase = moonPhase;
     }
 
-    public Integer getPrecipIntensity() {
+    public Double getPrecipIntensity() {
         return precipIntensity;
     }
 
-    public void setPrecipIntensity(Integer precipIntensity) {
+    public void setPrecipIntensity(Double precipIntensity) {
         this.precipIntensity = precipIntensity;
     }
 
-    public Integer getPrecipIntensityMax() {
+    public Double getPrecipIntensityMax() {
         return precipIntensityMax;
     }
 
-    public void setPrecipIntensityMax(Integer precipIntensityMax) {
+    public void setPrecipIntensityMax(Double precipIntensityMax) {
         this.precipIntensityMax = precipIntensityMax;
     }
 
-    public Integer getPrecipIntensityMaxTime() {
+    public Double getPrecipIntensityMaxTime() {
         return precipIntensityMaxTime;
     }
 
-    public void setPrecipIntensityMaxTime(Integer precipIntensityMaxTime) {
+    public void setPrecipIntensityMaxTime(Double precipIntensityMaxTime) {
         this.precipIntensityMaxTime = precipIntensityMaxTime;
     }
 
-    public Integer getPrecipProbability() {
+    public Double getPrecipProbability() {
         return precipProbability;
     }
 
-    public void setPrecipProbability(Integer precipProbability) {
+    public void setPrecipProbability(Double precipProbability) {
         this.precipProbability = precipProbability;
     }
 
@@ -280,11 +280,11 @@ public class Datum__ {
         this.visibility = visibility;
     }
 
-    public Integer getCloudCover() {
+    public Double getCloudCover() {
         return cloudCover;
     }
 
-    public void setCloudCover(Integer cloudCover) {
+    public void setCloudCover(Double cloudCover) {
         this.cloudCover = cloudCover;
     }
 

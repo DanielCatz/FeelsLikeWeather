@@ -47,7 +47,7 @@ public class Datum_ {
     private Double visibility;
     @SerializedName("cloudCover")
     @Expose
-    private Integer cloudCover;
+    private Double cloudCover;
     @SerializedName("pressure")
     @Expose
     private Double pressure;
@@ -162,11 +162,11 @@ public class Datum_ {
         this.visibility = visibility;
     }
 
-    public Integer getCloudCover() {
+    public Double getCloudCover() {
         return cloudCover;
     }
 
-    public void setCloudCover(Integer cloudCover) {
+    public void setCloudCover(Double cloudCover) {
         this.cloudCover = cloudCover;
     }
 

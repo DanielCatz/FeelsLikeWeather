@@ -1,6 +1,6 @@
 package com.example.kylie.feelslikeweather.rest;
 
-import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForcast;
+import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
 import com.example.kylie.feelslikeweather.models.pojos.CurrentWeather;
 
 
@@ -20,11 +20,12 @@ public interface WeatherApi {
                                                  @Query("APPID") final String key
     );
 
-    @GET("forcast/{key}/{latLong}")
-    Observable<DarkSkyForcast> getWeatherForcast(@Path("key") final String key,
-                                                 @Path("latLong") final String latLong
+    @GET("forecast/{key}/{latLong}")
+    Observable<DarkSkyForecast> getWeatherForecast(@Path("key") final String key,
+                                                   @Path("latLong") final String latLong
     );
 
-
+    @GET("forecast/188b80440d0420d6323cdfdbb431e987/47.646187,-122.141241")
+    Observable<DarkSkyForecast> getWeatherForecast();
 
 }

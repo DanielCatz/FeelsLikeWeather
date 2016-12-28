@@ -5,6 +5,8 @@ import android.support.v4.util.LruCache;
 
 import okhttp3.OkHttpClient;
 
+
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -18,9 +20,11 @@ import rx.schedulers.Schedulers;
 
 public class WeatherService {
     private static final String API_URL = "http://api.openweathermap.org/data/2.5/"; //Change according to your API path.
-    private static final String DARK_SKY = "https://api.darksky.net/forecast/188b80440d0420d6323cdfdbb431e987/";
+    private static final String DARK_SKY = "https://api.darksky.net/";
     private static final String LATLONG = "47.646187,-122.141241";
     private static final String KEY = "3f8c3c96024e46f39fb2f5fa4fdbbd12";
+    private static final String DARK_KEY = "188b80440d0420d6323cdfdbb431e987";
+
     private static WeatherService _instance;
     private WeatherApi REST_CLIENT;
     private LruCache<Class<?>, Observable<?>> apiObservables;
@@ -42,15 +46,15 @@ public class WeatherService {
 
         //Uncomment these lines below to start logging each request.
 
-        /*
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        httpClient.addInterceptor(logging);
-        */
+
+//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+//        httpClient.addInterceptor(logging);
+
         apiObservables = new LruCache<>(10);
         Retrofit retrofit = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .baseUrl(API_URL)
+                .baseUrl(DARK_SKY)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(httpClient.build())
                 .build();
@@ -62,11 +66,11 @@ public class WeatherService {
     public WeatherApi getAPI() {
         return REST_CLIENT;
     }
-    public String getKey(){
-        return KEY;
-    }
     public String getLatLong(){
         return LATLONG;
+    }
+    public String getKey(){
+        return DARK_KEY;
     }
 
     /**
@@ -75,6 +79,7 @@ public class WeatherService {
     public void clearCache(){
         apiObservables.evictAll();
     }
+
     public Observable<?> getPreparedObservable(Observable<?> rawObservable, Class<?> theClass, boolean cacheObservable,boolean useCache){
         Observable<?> preparedObservable = null;
 

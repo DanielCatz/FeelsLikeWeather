@@ -2,7 +2,6 @@ package com.example.kylie.feelslikeweather;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
 
                 progressBar.setVisibility(View.VISIBLE);
                 rxCallInWorks = true;
-                presenter.getCurrentWeather();
+                presenter.getWeatherForecast();
 //                Snackbar.make(view, "Refreshed", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
@@ -82,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
 
     @Override
     public void failedCall() {
+        Print.out("noooooooo");
+
         progressBar.setVisibility(View.GONE);
 
         rxCallInWorks= false;
@@ -99,6 +100,6 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     protected void onResume() {
         super.onResume();
         if(rxCallInWorks)
-            presenter.getCurrentWeather();
+            presenter.getWeatherForecast();
     }
 }
