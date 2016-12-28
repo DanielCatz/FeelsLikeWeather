@@ -2,17 +2,27 @@ package com.example.kylie.feelslikeweather;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.kylie.feelslikeweather.rest.ApiClient;
+import com.example.kylie.feelslikeweather.presenters.MainActivityPresenter;
+import com.example.kylie.feelslikeweather.rest.WeatherService;
+import com.example.kylie.feelslikeweather.screens.CurrentWeatherScreen;
+import com.example.kylie.feelslikeweather.utitlity.Print;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CurrentWeatherScreen {
+    TextView textblock;
+    ProgressBar progressBar;
+    MainActivityPresenter presenter;
+    private boolean rxCallInWorks;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,15 +31,20 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
+        textblock = (TextView) findViewById(R.id.txt_main);
+        progressBar = (ProgressBar) findViewById(R.id.pBar_main);
+        progressBar.setVisibility(View.GONE);
+        WeatherService weatherService= WeatherService.getInstance();
+        presenter = new MainActivityPresenter(this, weatherService);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ApiClient.getCurrentWeather("98007","us");
-                TextView display  = (TextView) findViewById(R.id.txt_main);
-                display.setText("called");
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+
+                progressBar.setVisibility(View.VISIBLE);
+                rxCallInWorks = true;
+                presenter.getCurrentWeather();
+//                Snackbar.make(view, "Refreshed", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
         });
@@ -55,5 +70,35 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void refreshCurrentWeather(String data) {
+        //hide swirl
+        progressBar.setVisibility(View.GONE);
+        textblock.setText(data);
+        rxCallInWorks= false;
+    }
+
+    @Override
+    public void failedCall() {
+        progressBar.setVisibility(View.GONE);
+
+        rxCallInWorks= false;
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        presenter.rxUnSubscribe();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(rxCallInWorks)
+            presenter.getCurrentWeather();
     }
 }

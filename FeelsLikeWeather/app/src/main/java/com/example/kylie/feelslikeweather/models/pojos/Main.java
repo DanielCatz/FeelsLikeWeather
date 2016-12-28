@@ -1,5 +1,5 @@
 
-package com.example.kylie.feelslikeweather.models;
+package com.example.kylie.feelslikeweather.models.pojos;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

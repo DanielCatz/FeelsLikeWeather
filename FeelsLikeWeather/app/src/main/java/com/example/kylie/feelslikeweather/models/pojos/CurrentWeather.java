@@ -1,5 +1,5 @@
 
-package com.example.kylie.feelslikeweather.models;
+package com.example.kylie.feelslikeweather.models.pojos;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
