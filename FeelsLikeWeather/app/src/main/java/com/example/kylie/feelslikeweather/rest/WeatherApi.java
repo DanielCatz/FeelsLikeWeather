@@ -25,7 +25,4 @@ public interface WeatherApi {
                                                    @Path("latLong") final String latLong
     );
 
-    @GET("forecast/188b80440d0420d6323cdfdbb431e987/47.646187,-122.141241")
-    Observable<DarkSkyForecast> getWeatherForecast();
-
 }

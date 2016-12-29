@@ -2,9 +2,12 @@ package com.example.kylie.feelslikeweather.presenters;
 
 import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
 import com.example.kylie.feelslikeweather.models.pojos.CurrentWeather;
+import com.example.kylie.feelslikeweather.models.wrappers.DarkSkyPOJOWrapper;
 import com.example.kylie.feelslikeweather.rest.WeatherService;
 import com.example.kylie.feelslikeweather.screens.CurrentWeatherScreen;
 import com.example.kylie.feelslikeweather.utitlity.Print;
+
+import java.util.ArrayList;
 
 import rx.Observable;
 import rx.Observer;
@@ -47,7 +50,7 @@ public class MainActivityPresenter{
 
                                @Override
                                public void onNext(CurrentWeather currentWeather) {
-                                   screen.refreshCurrentWeather(currentWeather.getName());
+                                  // screen.refreshCurrentWeather(currentWeather.getName());
                                    //TODO check here https://kmangutov.wordpress.com/2015/03/28/android-mvp-consuming-restful-apis/
                                }
                            }
@@ -56,11 +59,14 @@ public class MainActivityPresenter{
 
 
     public void getWeatherForecast(){
-        Print.out("getforecast");
-
+        //make more calls for each latlong received, return list for use in adapter
         String key = weatherService.getKey();
         String latLong = weatherService.getLatLong();
-        Print.out(key +"+" + latLong);
+        ArrayList<String> locations = new ArrayList<String>();
+        locations.add("47.646187,-122.141241");// a home in bellevue
+        locations.add("45.476393, -73.651176");// a house in canada
+        locations.add("11.200904, -60.780727");//location in tobago
+
         Observable<DarkSkyForecast> call = (Observable<DarkSkyForecast>)
                 weatherService.getPreparedObservable(weatherService.getAPI().getWeatherForecast(key,latLong), DarkSkyForecast.class, true, false);
         subscription = call.subscribe(new Observer<DarkSkyForecast>() {
@@ -71,17 +77,13 @@ public class MainActivityPresenter{
 
                                           @Override
                                           public void onError(Throwable e) {
-
-                                              Print.out(e.getMessage());
                                               screen.failedCall();
                                           }
 
                                           @Override
                                           public void onNext(DarkSkyForecast forecast) {
-                                              Print.out("forecast");
-
-                                              screen.refreshCurrentWeather(forecast.getCurrently().getTemperature().toString());
-                                              //TODO check here https://kmangutov.wordpress.com/2015/03/28/android-mvp-consuming-restful-apis/
+                                              DarkSkyPOJOWrapper wrapper = new DarkSkyPOJOWrapper(forecast);
+                                              screen.refreshCurrentWeather(wrapper);
                                           }
                                       }
         );

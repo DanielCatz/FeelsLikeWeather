@@ -4,7 +4,9 @@ package com.example.kylie.feelslikeweather.models.darkskypojos;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Alert {
+import java.io.Serializable;
+
+public class Alert implements Serializable {
 
     @SerializedName("title")
     @Expose
