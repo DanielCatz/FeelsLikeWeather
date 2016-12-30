@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public interface CurrentWeatherScreen {
 
-    public void refreshWeatherList(DarkSkyPOJOWrapper wrapper);
+    public void refreshWeatherList(DarkSkyPOJOWrapper wrapper, int position);
 
     public void failedCall();
 

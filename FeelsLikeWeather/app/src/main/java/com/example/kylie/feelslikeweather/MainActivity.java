@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     CurrentWeatherAdapter currentWeatherAdapter;
     MainActivityPresenter presenter;
     private boolean rxCallInWorks;
-    private GoogleApiClient mGoogleApiClient;
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
 
     @Override
@@ -89,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
         currentWeatherAdapter.setInitialListSize(settingsLocations.size());
         int i =0;
         for(String location : settingsLocations){
-            presenter.getWeatherForecast(location,true,i);
+            presenter.refreshWeatherForecast(location,i);
             i++;
         }
     }
@@ -101,6 +100,14 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
         progressBar.setVisibility(View.GONE);
         currentWeatherAdapter.addWeatherRow(forecast,position);
         showMessage("Location Added");
+        rxCallInWorks= false;
+    }
+
+    @Override
+    public void refreshWeatherList(DarkSkyPOJOWrapper forecast, int position) {
+        progressBar.setVisibility(View.GONE);
+        currentWeatherAdapter.updateWeatherRow(forecast,position);
+        showMessage("Location(s) Updated");
         rxCallInWorks= false;
     }
 
@@ -133,11 +140,6 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void refreshWeatherList(DarkSkyPOJOWrapper forecast) {
-//requires shared preferences so i dont lose track of what to refresh
     }
 
     @Override

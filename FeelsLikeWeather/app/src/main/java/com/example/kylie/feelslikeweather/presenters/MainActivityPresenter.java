@@ -81,7 +81,7 @@ public class MainActivityPresenter{
     }
 
 
-    public void getWeatherForecast(String latLong, final boolean isNewLocation,final int position){
+    public void getWeatherForecast(String latLong, final boolean isUpdate,final int position){
         String key = weatherService.getKey();
 
         Observable<DarkSkyForecast> call = (Observable<DarkSkyForecast>)
@@ -102,11 +102,10 @@ public class MainActivityPresenter{
                                           @Override
                                           public void onNext(DarkSkyForecast forecast) {
                                               DarkSkyPOJOWrapper wrapper = new DarkSkyPOJOWrapper(forecast);
-                                              if(isNewLocation){
-                                                  screen.addNewLocationToWeatherList(wrapper,position);
-
+                                              if(isUpdate){
+                                                  screen.refreshWeatherList(wrapper,position);
                                               }else{
-                                                  screen.refreshWeatherList(wrapper);
+                                                  screen.addNewLocationToWeatherList(wrapper,position);
                                               }
 
                                           }
@@ -119,17 +118,17 @@ public class MainActivityPresenter{
 
         if(repository.getSavedLocations()!=null) {
             Print.out("adding from append");
-            getWeatherForecast(latLong, true, repository.getSavedLocations().size());
+            getWeatherForecast(latLong, false, repository.getSavedLocations().size());
             repository.saveLocation(latLong);
         }
 
     }
-    public void refreshWeatherForecast(){
+    public void refreshWeatherForecast(String latLong,int row){
 
-        Print.out("refresh from append");
+//        Print.out("refresh from append");
        // repository.saveLocation(latLong);
-        Print.out("reposize:"+ repository.getSavedLocations().size());
-       // getWeatherForecast(latLong,true,repository.getSavedLocations().size());
+//        Print.out("reposize:"+ repository.getSavedLocations().size());
+        getWeatherForecast(latLong,true,row);
 
     }
 

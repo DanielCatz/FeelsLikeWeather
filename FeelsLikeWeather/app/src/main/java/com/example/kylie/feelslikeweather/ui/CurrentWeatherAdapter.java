@@ -30,20 +30,15 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
     }
 
     public void addWeatherRow(DarkSkyPOJOWrapper event, int position){
-        if(forecasts.size()<=position){
             Print.out("add");
             forecasts.add(event);
-        }else{
-            Print.out("refresh");
-            forecasts.set(position,event);}
             notifyDataSetChanged();
     }
 
 
-    public void updateWeatherRow(ArrayList<DarkSkyPOJOWrapper> events, int position){
-        for(DarkSkyPOJOWrapper event :events){
-            forecasts.set(position,event);
-        }
+    public void updateWeatherRow(DarkSkyPOJOWrapper event, int position){
+        Print.out("refresh");
+        forecasts.set(position,event);
         notifyDataSetChanged();
     }
 
