@@ -39,6 +39,30 @@ public class DarkSkyPOJOWrapper implements Serializable {
         return currentTemperature;
     }
 
+    public void setLocation(String[] location) {
+        this.location = location;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public void setCurrentSummary(String currentSummary) {
+        this.currentSummary = currentSummary;
+    }
+
+    public void setCurrentPrecipitation(Precipitation currentPrecipitation) {
+        this.currentPrecipitation = currentPrecipitation;
+    }
+
+    public void setCurrentIconRes(String currentIconRes) {
+        this.currentIconRes = currentIconRes;
+    }
+
+    public void setCurrentTemperature(Double currentTemperature) {
+        this.currentTemperature = currentTemperature;
+    }
+
     private String[] location;
     private String time;
     private String currentSummary;

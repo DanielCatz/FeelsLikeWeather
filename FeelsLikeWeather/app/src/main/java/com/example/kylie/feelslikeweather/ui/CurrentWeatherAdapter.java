@@ -28,9 +28,17 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
         this.screen= screen;
     }
 
-    public void addCurrentWeather(DarkSkyPOJOWrapper event){
-        forecasts.add(event);
+    public void addCurrentWeather(DarkSkyPOJOWrapper event, int position){
+        if(forecasts.size()==position){
+            forecasts.add(event);
+        }else
+        forecasts.set(position,event);
+        notifyDataSetChanged();
+    }
 
+
+    public void updateCardAt(){
+        forecasts.get(0).setCurrentTemperature(9000.0);
         notifyDataSetChanged();
     }
 
@@ -49,6 +57,14 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return forecasts.size();
+    }
+
+
+
+    public void setInitialListSize(int initialListSize) {
+        for(int i = 0 ; i<initialListSize;i++){
+            forecasts.add(null);
+        }
     }
 
     class CurrentWeatherViewHolder extends RecyclerView.ViewHolder{
@@ -73,11 +89,21 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
 
         public void bindData(DarkSkyPOJOWrapper forecast) {
             this.forecast= forecast;
-            txtState.setText(forecast.getLocation()[0]);
+            if(forecast!=null) {
+                txtState.setText(forecast.getLocation()[0]);
+                txtCity.setText(forecast.getLocation()[1]);
+                txtTemp.setText(forecast.getTempString());
+                txtTime.setText(forecast.getTime());
+                //txtCity.setText(darkSkyForecast.getCurrently()
+            }
+        }
+
+        public void updateCard(){
+
+            txtState.setText("DERP");
             txtCity.setText(forecast.getLocation()[1]);
-            txtTemp.setText(forecast.getTempString());
+            txtTemp.setText("DERP");
             txtTime.setText(forecast.getTime());
-            //txtCity.setText(darkSkyForecast.getCurrently()
 
         }
 
@@ -85,6 +111,8 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
             @Override
             public void onClick(View view) {
                 Print.out("tapped item" + getAdapterPosition());
+//                updateCard();
+//                updateCardAt();
                 screen.openDetailedWeatherActivity(forecast);
             }
         };

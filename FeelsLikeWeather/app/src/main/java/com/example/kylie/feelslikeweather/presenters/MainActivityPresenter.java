@@ -58,17 +58,12 @@ public class MainActivityPresenter{
     }
 
 
-    public void getWeatherForecast(){
-        //make more calls for each latlong received, return list for use in adapter
+    public void getWeatherForecast(String latLong, final boolean isNewLocation,final int position){
         String key = weatherService.getKey();
-        String latLong = weatherService.getLatLong();
-        ArrayList<String> locations = new ArrayList<String>();
-        locations.add("47.646187,-122.141241");// a home in bellevue
-        locations.add("45.476393, -73.651176");// a house in canada
-        locations.add("11.200904, -60.780727");//location in tobago
 
         Observable<DarkSkyForecast> call = (Observable<DarkSkyForecast>)
-                weatherService.getPreparedObservable(weatherService.getAPI().getWeatherForecast(key,latLong), DarkSkyForecast.class, true, false);
+                weatherService.getPreparedObservable(weatherService.getAPI().getWeatherForecast(key,latLong), DarkSkyForecast.class, false, false);
+
         subscription = call.subscribe(new Observer<DarkSkyForecast>() {
                                           @Override
                                           public void onCompleted() {
@@ -77,13 +72,19 @@ public class MainActivityPresenter{
 
                                           @Override
                                           public void onError(Throwable e) {
+                                                Print.out(e.getMessage());
                                               screen.failedCall();
                                           }
 
                                           @Override
                                           public void onNext(DarkSkyForecast forecast) {
                                               DarkSkyPOJOWrapper wrapper = new DarkSkyPOJOWrapper(forecast);
-                                              screen.refreshCurrentWeather(wrapper);
+                                              if(isNewLocation){
+                                                  screen.addNewLocation(wrapper,position);
+                                              }else{
+                                                  screen.refreshCurrentWeather(wrapper);
+                                              }
+
                                           }
                                       }
         );

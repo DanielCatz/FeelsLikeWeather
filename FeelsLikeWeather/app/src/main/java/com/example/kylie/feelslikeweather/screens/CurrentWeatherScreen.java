@@ -14,4 +14,6 @@ public interface CurrentWeatherScreen {
     public void failedCall();
 
     public void openDetailedWeatherActivity(DarkSkyPOJOWrapper forecast);
+
+    public void addNewLocation(DarkSkyPOJOWrapper forecast, int position);
 }
