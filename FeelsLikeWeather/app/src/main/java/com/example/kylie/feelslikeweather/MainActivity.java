@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.kylie.feelslikeweather.models.SharedPreferencesRepository;
 import com.example.kylie.feelslikeweather.models.wrappers.DarkSkyPOJOWrapper;
 import com.example.kylie.feelslikeweather.models.wrappers.Precipitation;
 import com.example.kylie.feelslikeweather.presenters.MainActivityPresenter;
@@ -30,7 +31,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 //import com.google.android.gms.common.api.GoogleApiClient;
 //import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     private boolean rxCallInWorks;
     private GoogleApiClient mGoogleApiClient;
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
-    ArrayList<String> locations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +52,16 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+
         textblock = (TextView) findViewById(R.id.txt_main);
         currentWeatherRecycler = (RecyclerView)findViewById(R.id.recycle_main);
         progressBar = (ProgressBar) findViewById(R.id.pBar_main);
         progressBar.setVisibility(View.GONE);
-        locations = new ArrayList<String>();
         rxCallInWorks = false;
         WeatherService weatherService= WeatherService.getInstance();
-        presenter = new MainActivityPresenter(this, weatherService);
+        SharedPreferencesRepository pref = new SharedPreferencesRepository(this);
+        presenter = new MainActivityPresenter(this, weatherService,pref);
         initializeRecyclerView();
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -70,39 +71,38 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
             }
         });
 
-        loadWeatherLocationsFromSettings();
-    }
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presenter.clearSettings();
+            }
+        });
 
-    public void loadWeatherLocationsFromSettings(){
+        presenter.refreshCurrentWeatherScreen();
+        progressBar.setVisibility(View.GONE);
+    }
+    @Override
+    public void loadWeatherLocationsFromSettings(ArrayList<String> settingsLocations){
         progressBar.setVisibility(View.VISIBLE);
         rxCallInWorks = true;
         //get array from settings
-        ArrayList<String> settingsLocations = new ArrayList<>();
-        settingsLocations.add("45.501688900000005, -73.567256");
-        settingsLocations.add("47.646187,-122.141241");
-        settingsLocations.add("45.476393, -73.651176");
-        settingsLocations.add("37.8267,-122.4233");
-
-
-        locations.addAll(settingsLocations);
-        currentWeatherAdapter.setInitialListSize(locations.size());
+        currentWeatherAdapter.setInitialListSize(settingsLocations.size());
         int i =0;
-        for(String location : locations){
+        for(String location : settingsLocations){
             presenter.getWeatherForecast(location,true,i);
             i++;
         }
     }
 
     @Override
-    public void addNewLocation(DarkSkyPOJOWrapper forecast,int position) {
+    public void addNewLocationToWeatherList(DarkSkyPOJOWrapper forecast, int position) {
         //hide swirl
+
         progressBar.setVisibility(View.GONE);
-        currentWeatherAdapter.addCurrentWeather(forecast,position);
+        currentWeatherAdapter.addWeatherRow(forecast,position);
         showMessage("Location Added");
         rxCallInWorks= false;
     }
-
-
 
     public void initializeRecyclerView(){
 
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     }
 
     @Override
-    public void refreshCurrentWeather(DarkSkyPOJOWrapper forecast) {
+    public void refreshWeatherList(DarkSkyPOJOWrapper forecast) {
 //requires shared preferences so i dont lose track of what to refresh
     }
 
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
                 Place place = PlaceAutocomplete.getPlace(this, data);
                 String latLong = place.getLatLng().latitude+","+place.getLatLng().longitude;
                 showMessage(latLong);
-                presenter.getWeatherForecast(latLong,true, locations.size());
+                presenter.appendWeatherForecast(latLong);
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
                 Print.out(status.getStatusMessage());
@@ -205,10 +205,10 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume() {//if interrupted
         super.onResume();
-        if(rxCallInWorks)
-            presenter.getWeatherForecast(locations.get(0),false,0);
+//        if(rxCallInWorks)
+//            presenter.getWeatherForecast(locations.get(0),false,0);
     }
 
 }

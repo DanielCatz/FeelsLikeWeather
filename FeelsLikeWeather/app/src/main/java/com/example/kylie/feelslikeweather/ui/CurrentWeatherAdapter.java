@@ -23,22 +23,27 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
 
     private ArrayList<DarkSkyPOJOWrapper> forecasts;
     private CurrentWeatherScreen screen;
+
     public CurrentWeatherAdapter(CurrentWeatherScreen screen){
         this.forecasts =new ArrayList<>();
         this.screen= screen;
     }
 
-    public void addCurrentWeather(DarkSkyPOJOWrapper event, int position){
-        if(forecasts.size()==position){
+    public void addWeatherRow(DarkSkyPOJOWrapper event, int position){
+        if(forecasts.size()<=position){
+            Print.out("add");
             forecasts.add(event);
-        }else
-        forecasts.set(position,event);
-        notifyDataSetChanged();
+        }else{
+            Print.out("refresh");
+            forecasts.set(position,event);}
+            notifyDataSetChanged();
     }
 
 
-    public void updateCardAt(){
-        forecasts.get(0).setCurrentTemperature(9000.0);
+    public void updateWeatherRow(ArrayList<DarkSkyPOJOWrapper> events, int position){
+        for(DarkSkyPOJOWrapper event :events){
+            forecasts.set(position,event);
+        }
         notifyDataSetChanged();
     }
 

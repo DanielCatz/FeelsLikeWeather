@@ -1,5 +1,6 @@
 package com.example.kylie.feelslikeweather.presenters;
 
+import com.example.kylie.feelslikeweather.Repository;
 import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
 import com.example.kylie.feelslikeweather.models.pojos.CurrentWeather;
 import com.example.kylie.feelslikeweather.models.wrappers.DarkSkyPOJOWrapper;
@@ -22,13 +23,35 @@ public class MainActivityPresenter{
     private WeatherService weatherService;
     private CurrentWeatherScreen screen;
     private Subscription subscription;
+    private Repository repository;
 
-    public MainActivityPresenter(CurrentWeatherScreen screen,WeatherService weatherService){
+    public MainActivityPresenter(CurrentWeatherScreen screen,WeatherService weatherService, Repository repository){
         this.screen = screen;
         this.weatherService = weatherService;
+        this.repository = repository;
     }
 
 
+
+
+
+    public void refreshCurrentWeatherScreen(){
+        ArrayList<String> settingsLocations = new ArrayList<>();
+        settingsLocations.add("45.501688900000005,-73.567256");
+        settingsLocations.add("47.646187,-122.141241");
+        settingsLocations.add("45.476393,-73.651176");
+        settingsLocations.add("37.8267,-122.4233");
+
+        ArrayList<String> prefLocations = repository.getSavedLocations();
+
+        if(prefLocations!=null){
+            screen.loadWeatherLocationsFromSettings(prefLocations);
+        }
+    }
+
+    public void clearSettings(){
+        repository.clearLocations();
+    }
 
     public void getCurrentWeather(){
 
@@ -50,7 +73,7 @@ public class MainActivityPresenter{
 
                                @Override
                                public void onNext(CurrentWeather currentWeather) {
-                                  // screen.refreshCurrentWeather(currentWeather.getName());
+                                  // screen.refreshWeatherList(currentWeather.getName());
                                    //TODO check here https://kmangutov.wordpress.com/2015/03/28/android-mvp-consuming-restful-apis/
                                }
                            }
@@ -80,14 +103,34 @@ public class MainActivityPresenter{
                                           public void onNext(DarkSkyForecast forecast) {
                                               DarkSkyPOJOWrapper wrapper = new DarkSkyPOJOWrapper(forecast);
                                               if(isNewLocation){
-                                                  screen.addNewLocation(wrapper,position);
+                                                  screen.addNewLocationToWeatherList(wrapper,position);
+
                                               }else{
-                                                  screen.refreshCurrentWeather(wrapper);
+                                                  screen.refreshWeatherList(wrapper);
                                               }
 
                                           }
                                       }
         );
+    }
+
+
+    public void appendWeatherForecast(String latLong){
+
+        if(repository.getSavedLocations()!=null) {
+            Print.out("adding from append");
+            getWeatherForecast(latLong, true, repository.getSavedLocations().size());
+            repository.saveLocation(latLong);
+        }
+
+    }
+    public void refreshWeatherForecast(){
+
+        Print.out("refresh from append");
+       // repository.saveLocation(latLong);
+        Print.out("reposize:"+ repository.getSavedLocations().size());
+       // getWeatherForecast(latLong,true,repository.getSavedLocations().size());
+
     }
 
     public void rxUnSubscribe(){
