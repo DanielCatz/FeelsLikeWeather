@@ -6,7 +6,11 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:id="@+id/current_weather_root"
     android:background="@android:color/darker_gray"
-    android:layout_height="150dp">
+    android:layout_height="150dp"
+    android:padding="15dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="7dp"
+    android:layout_marginRight="7dp">
 
 
     <LinearLayout

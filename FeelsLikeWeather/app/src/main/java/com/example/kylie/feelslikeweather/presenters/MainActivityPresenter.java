@@ -2,7 +2,6 @@ package com.example.kylie.feelslikeweather.presenters;
 
 import com.example.kylie.feelslikeweather.models.Repository;
 import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
-import com.example.kylie.feelslikeweather.models.pojos.CurrentWeather;
 import com.example.kylie.feelslikeweather.models.wrappers.LocationService;
 import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
 import com.example.kylie.feelslikeweather.rest.WeatherService;
@@ -34,7 +33,7 @@ public class MainActivityPresenter{
         this.locationService =  locationService;
     }
 
-    public void refreshCurrentWeatherScreen(){
+    public void requestRefreshCurrentWeatherScreen(){
         ArrayList<String> prefLocations = repository.getSavedLocations();
         if(prefLocations==null)
         {
@@ -52,9 +51,9 @@ public class MainActivityPresenter{
     }
 
 
-    public void clearSettings(){
+    public void requestClearSettings(){
         repository.clearLocations();
-        refreshCurrentWeatherScreen();
+        requestRefreshCurrentWeatherScreen();
     }
 
 
@@ -93,20 +92,20 @@ public class MainActivityPresenter{
     }
 
 
-    public void appendWeatherForecast(String latLong){
+    private void appendWeatherForecast(String latLong){
             Print.out("adding from append");
             getWeatherForecast(latLong, false,0);
             repository.saveLocation(latLong);
     }
-    public void refreshWeatherForecast(String latLong,int row){
+    private void refreshWeatherForecast(String latLong,int row){
 
         getWeatherForecast(latLong,true,row);
     }
 
-    public void selectLocationRequest(){
+    public void requestSelectLocation(){
         locationService.LaunchPlacesIntentForResult(screen.getActivity());
     }
-    public void handleOnActivityResult(int requestCode,int resultCode){
+    public void requestHandleOnActivityResult(int requestCode, int resultCode){
         String latLong;
         latLong=locationService.getPlacesResult(requestCode,resultCode,screen.getIntentData(),screen.getActivity());
         appendWeatherForecast(latLong);

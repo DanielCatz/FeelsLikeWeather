@@ -30,17 +30,17 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
     }
 
     public void addWeatherRow(WeatherWrapper event){
-        Print.out("preadd"+forecasts.toString());
+    //    Print.out("preadd"+forecasts.toString());
         forecasts.add(event);
-        Print.out("postadd"+forecasts.toString());
+   //     Print.out("postadd"+forecasts.toString());
         notifyDataSetChanged();
     }
 
 
     public void updateWeatherRow(WeatherWrapper event, int position){
-        Print.out("preupdate"+forecasts.toString());
+//        Print.out("preupdate"+forecasts.toString());
         forecasts.set(position,event);
-        Print.out("postupdate"+forecasts.toString());
+   //     Print.out("postupdate"+forecasts.toString());
         notifyDataSetChanged();
     }
 

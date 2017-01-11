@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.kylie.feelslikeweather.R;
@@ -26,8 +25,6 @@ import com.example.kylie.feelslikeweather.rest.WeatherService;
 import com.example.kylie.feelslikeweather.screens.CurrentWeatherScreen;
 import com.example.kylie.feelslikeweather.ui.CurrentWeatherAdapter;
 import com.example.kylie.feelslikeweather.utils.Print;
-
-import java.util.ArrayList;
 
 //import com.google.android.gms.common.api.GoogleApiClient;
 //import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
@@ -73,12 +70,19 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.clearSettings();
+                presenter.requestClearSettings();
+            }
+        });
+
+        progressBar.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                presenter.requestRefreshCurrentWeatherScreen();
             }
         });
 
 
-        presenter.refreshCurrentWeatherScreen();
+        presenter.requestRefreshCurrentWeatherScreen();
     }
     @Override
     public void loadWeatherLocationsFromSettings(int numberOfSpacesToReserve){
@@ -172,13 +176,13 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
 }
 
     public void selectLocation(){
-        presenter.selectLocationRequest();
+        presenter.requestSelectLocation();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         this.data = data;
-        presenter.handleOnActivityResult(requestCode,resultCode);
+        presenter.requestHandleOnActivityResult(requestCode,resultCode);
 
     }
     @Override
@@ -216,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     protected void onResume() {//if interrupted
         super.onResume();
         if(rxCallInWorks);
-           //presenter.refreshCurrentWeatherScreen();
+           //presenter.requestRefreshCurrentWeatherScreen();
     }
 
 }

@@ -31,7 +31,7 @@ public class SharedPreferencesRepository implements Repository {
         for(int i = 0; i <tempArray.length;i++){
             locations.add(tempArray[i]);
         }
-        Print.out("getSavedlocations: "+ locations.toString());
+        //Print.out("getSavedlocations: "+ locations.toString());
         return locations;
     }
 
