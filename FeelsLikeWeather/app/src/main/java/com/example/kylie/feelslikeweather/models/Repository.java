@@ -1,4 +1,4 @@
-package com.example.kylie.feelslikeweather;
+package com.example.kylie.feelslikeweather.models;
 
 import java.util.ArrayList;
 

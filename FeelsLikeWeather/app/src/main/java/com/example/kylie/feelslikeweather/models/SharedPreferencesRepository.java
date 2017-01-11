@@ -4,8 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.example.kylie.feelslikeweather.Repository;
-import com.example.kylie.feelslikeweather.utitlity.Print;
+import com.example.kylie.feelslikeweather.utils.Print;
 
 import java.util.ArrayList;
 
@@ -58,8 +57,10 @@ public class SharedPreferencesRepository implements Repository {
 
     public void clearLocations(){
         SharedPreferences.Editor edit = preferences.edit();
+        locations.clear();
         Print.out("Emptying:"+preferences.getString("locations","empty"));
         edit.clear();
         edit.commit();
+        Print.out("Emptied:"+preferences.getString("locations","empty"));
     }
 }

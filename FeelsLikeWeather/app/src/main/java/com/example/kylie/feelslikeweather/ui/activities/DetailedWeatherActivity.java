@@ -1,4 +1,4 @@
-package com.example.kylie.feelslikeweather;
+package com.example.kylie.feelslikeweather.ui.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,9 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.kylie.feelslikeweather.models.wrappers.DarkSkyPOJOWrapper;
-import com.example.kylie.feelslikeweather.models.wrappers.Precipitation;
-import com.example.kylie.feelslikeweather.utitlity.Print;
+import com.example.kylie.feelslikeweather.R;
+import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
+import com.example.kylie.feelslikeweather.utils.Print;
 
 public class DetailedWeatherActivity extends AppCompatActivity {
 TextView testText;
@@ -34,7 +34,7 @@ TextView testText;
     }
 
     public void acceptBundle(){
-        DarkSkyPOJOWrapper forecast =(DarkSkyPOJOWrapper)getIntent().getSerializableExtra("Forecast");
+        WeatherWrapper forecast =(WeatherWrapper)getIntent().getSerializableExtra("Forecast");
         Print.out(forecast.getTime());
         testText.setText(forecast.getTempString());
 //        Precipitation forecast =(Precipitation)getIntent().getSerializableExtra("Forecast");

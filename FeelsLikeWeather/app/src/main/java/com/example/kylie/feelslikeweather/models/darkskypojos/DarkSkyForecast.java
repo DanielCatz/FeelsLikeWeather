@@ -19,7 +19,7 @@ public class DarkSkyForecast implements Serializable {
     private String timezone;
     @SerializedName("offset")
     @Expose
-    private Integer offset;
+    private Double offset;
     @SerializedName("currently")
     @Expose
     private Currently currently;
@@ -63,11 +63,11 @@ public class DarkSkyForecast implements Serializable {
         this.timezone = timezone;
     }
 
-    public Integer getOffset() {
+    public Double getOffset() {
         return offset;
     }
 
-    public void setOffset(Integer offset) {
+    public void setOffset(Double offset) {
         this.offset = offset;
     }
 

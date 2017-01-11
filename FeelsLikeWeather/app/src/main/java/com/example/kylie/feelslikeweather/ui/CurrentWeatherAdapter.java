@@ -8,9 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.kylie.feelslikeweather.R;
-import com.example.kylie.feelslikeweather.models.wrappers.DarkSkyPOJOWrapper;
+import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
 import com.example.kylie.feelslikeweather.screens.CurrentWeatherScreen;
-import com.example.kylie.feelslikeweather.utitlity.Print;
+import com.example.kylie.feelslikeweather.utils.Print;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class CurrentWeatherAdapter extends RecyclerView.Adapter {
 
-    private ArrayList<DarkSkyPOJOWrapper> forecasts;
+    private ArrayList<WeatherWrapper> forecasts;
     private CurrentWeatherScreen screen;
 
     public CurrentWeatherAdapter(CurrentWeatherScreen screen){
@@ -29,16 +29,18 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
         this.screen= screen;
     }
 
-    public void addWeatherRow(DarkSkyPOJOWrapper event, int position){
-            Print.out("add");
-            forecasts.add(event);
-            notifyDataSetChanged();
+    public void addWeatherRow(WeatherWrapper event){
+        Print.out("preadd"+forecasts.toString());
+        forecasts.add(event);
+        Print.out("postadd"+forecasts.toString());
+        notifyDataSetChanged();
     }
 
 
-    public void updateWeatherRow(DarkSkyPOJOWrapper event, int position){
-        Print.out("refresh");
+    public void updateWeatherRow(WeatherWrapper event, int position){
+        Print.out("preupdate"+forecasts.toString());
         forecasts.set(position,event);
+        Print.out("postupdate"+forecasts.toString());
         notifyDataSetChanged();
     }
 
@@ -61,10 +63,12 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
 
 
 
-    public void setInitialListSize(int initialListSize) {
-        for(int i = 0 ; i<initialListSize;i++){
-            forecasts.add(null);
-        }
+    public void prepareSpaceToLoadLocationsAsBatch(int numberOfSpacesToReserve) {
+        forecasts.clear();
+            for(int i = 0 ; i<numberOfSpacesToReserve;i++){
+                forecasts.add(null);
+            }
+        notifyDataSetChanged();
     }
 
     class CurrentWeatherViewHolder extends RecyclerView.ViewHolder{
@@ -74,7 +78,7 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
         TextView txtTemp;
         TextView txtTime;
         ImageView imgIcon;
-        DarkSkyPOJOWrapper forecast;
+        WeatherWrapper forecast;
         //TODO:deal with doodads
 
         public CurrentWeatherViewHolder(View view) {
@@ -87,24 +91,14 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
             //TODO: deal with icon
         }
 
-        public void bindData(DarkSkyPOJOWrapper forecast) {
+        public void bindData(WeatherWrapper forecast) {
             this.forecast= forecast;
             if(forecast!=null) {
-                txtState.setText(forecast.getLocation()[0]);
-                txtCity.setText(forecast.getLocation()[1]);
+                txtState.setText(forecast.getState());
+                txtCity.setText(forecast.getCity());
                 txtTemp.setText(forecast.getTempString());
                 txtTime.setText(forecast.getTime());
-                //txtCity.setText(darkSkyForecast.getCurrently()
             }
-        }
-
-        public void updateCard(){
-
-            txtState.setText("DERP");
-            txtCity.setText(forecast.getLocation()[1]);
-            txtTemp.setText("DERP");
-            txtTime.setText(forecast.getTime());
-
         }
 
         View.OnClickListener mClickListener = new View.OnClickListener() {

@@ -1,7 +1,10 @@
 package com.example.kylie.feelslikeweather.screens;
 
-import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
-import com.example.kylie.feelslikeweather.models.wrappers.DarkSkyPOJOWrapper;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+
+import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
 
 import java.util.ArrayList;
 
@@ -11,13 +14,19 @@ import java.util.ArrayList;
 
 public interface CurrentWeatherScreen {
 
-    public void refreshWeatherList(DarkSkyPOJOWrapper wrapper, int position);
+
+    public void refreshWeatherListView(WeatherWrapper wrapper, int position);
 
     public void failedCall();
 
-    public void openDetailedWeatherActivity(DarkSkyPOJOWrapper forecast);
+    public void openDetailedWeatherActivity(WeatherWrapper forecast);
 
-    public void addNewLocationToWeatherList(DarkSkyPOJOWrapper forecast, int position);
+    public void addNewLocationToWeatherList(WeatherWrapper forecast);
 
-    public void loadWeatherLocationsFromSettings(ArrayList<String> settingsLocations);
+    public void loadWeatherLocationsFromSettings(int numberOfSpacesToReserve);
+
+
+
+    public AppCompatActivity getActivity();
+    public Intent getIntentData();
 }

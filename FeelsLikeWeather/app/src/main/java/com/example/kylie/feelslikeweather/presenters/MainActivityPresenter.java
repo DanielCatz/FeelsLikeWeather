@@ -1,12 +1,13 @@
 package com.example.kylie.feelslikeweather.presenters;
 
-import com.example.kylie.feelslikeweather.Repository;
+import com.example.kylie.feelslikeweather.models.Repository;
 import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
 import com.example.kylie.feelslikeweather.models.pojos.CurrentWeather;
-import com.example.kylie.feelslikeweather.models.wrappers.DarkSkyPOJOWrapper;
+import com.example.kylie.feelslikeweather.models.wrappers.LocationService;
+import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
 import com.example.kylie.feelslikeweather.rest.WeatherService;
 import com.example.kylie.feelslikeweather.screens.CurrentWeatherScreen;
-import com.example.kylie.feelslikeweather.utitlity.Print;
+import com.example.kylie.feelslikeweather.utils.Print;
 
 import java.util.ArrayList;
 
@@ -24,66 +25,42 @@ public class MainActivityPresenter{
     private CurrentWeatherScreen screen;
     private Subscription subscription;
     private Repository repository;
+    private LocationService locationService;
 
-    public MainActivityPresenter(CurrentWeatherScreen screen,WeatherService weatherService, Repository repository){
+    public MainActivityPresenter(CurrentWeatherScreen screen, WeatherService weatherService, Repository repository, LocationService locationService){
         this.screen = screen;
         this.weatherService = weatherService;
         this.repository = repository;
+        this.locationService =  locationService;
     }
-
-
-
-
 
     public void refreshCurrentWeatherScreen(){
-        ArrayList<String> settingsLocations = new ArrayList<>();
-        settingsLocations.add("45.501688900000005,-73.567256");
-        settingsLocations.add("47.646187,-122.141241");
-        settingsLocations.add("45.476393,-73.651176");
-        settingsLocations.add("37.8267,-122.4233");
-
         ArrayList<String> prefLocations = repository.getSavedLocations();
+        if(prefLocations==null)
+        {
+            screen.loadWeatherLocationsFromSettings(0);
+        }else{
 
-        if(prefLocations!=null){
-            screen.loadWeatherLocationsFromSettings(prefLocations);
+            screen.loadWeatherLocationsFromSettings(prefLocations.size());
+            int i = 0;
+            for (String location : prefLocations) {
+                refreshWeatherForecast(location, i);
+                i++;
+            }
         }
+
     }
+
 
     public void clearSettings(){
         repository.clearLocations();
-    }
-
-    public void getCurrentWeather(){
-
-        String zip = "98007,US";
-        String key = weatherService.getKey();
-        //Observable<CurrentWeather> call = weatherService.getAPI().getCurrentWeather(zip,key);
-        Observable<CurrentWeather> call = (Observable<CurrentWeather>)
-                weatherService.getPreparedObservable(weatherService.getAPI().getCurrentWeather(zip,key), CurrentWeather.class, true, false);
-        subscription = call.subscribe(new Observer<CurrentWeather>() {
-                               @Override
-                               public void onCompleted() {
-
-                               }
-
-                               @Override
-                               public void onError(Throwable e) {
-                                   screen.failedCall();
-                               }
-
-                               @Override
-                               public void onNext(CurrentWeather currentWeather) {
-                                  // screen.refreshWeatherList(currentWeather.getName());
-                                   //TODO check here https://kmangutov.wordpress.com/2015/03/28/android-mvp-consuming-restful-apis/
-                               }
-                           }
-                );
+        refreshCurrentWeatherScreen();
     }
 
 
-    public void getWeatherForecast(String latLong, final boolean isUpdate,final int position){
-        String key = weatherService.getKey();
 
+    private void getWeatherForecast(final String latLong, final boolean isUpdate, final int position){
+        String key = weatherService.getKey();
         Observable<DarkSkyForecast> call = (Observable<DarkSkyForecast>)
                 weatherService.getPreparedObservable(weatherService.getAPI().getWeatherForecast(key,latLong), DarkSkyForecast.class, false, false);
 
@@ -101,11 +78,13 @@ public class MainActivityPresenter{
 
                                           @Override
                                           public void onNext(DarkSkyForecast forecast) {
-                                              DarkSkyPOJOWrapper wrapper = new DarkSkyPOJOWrapper(forecast);
+                                              WeatherWrapper wrapper = new WeatherWrapper(forecast);
+                                              wrapper.setState(locationService.getState(screen.getActivity(),latLong));
+                                              wrapper.setCity(locationService.getCity(screen.getActivity(),latLong));
                                               if(isUpdate){
-                                                  screen.refreshWeatherList(wrapper,position);
+                                                  screen.refreshWeatherListView(wrapper,position);
                                               }else{
-                                                  screen.addNewLocationToWeatherList(wrapper,position);
+                                                  screen.addNewLocationToWeatherList(wrapper);
                                               }
 
                                           }
@@ -115,25 +94,28 @@ public class MainActivityPresenter{
 
 
     public void appendWeatherForecast(String latLong){
-
-        if(repository.getSavedLocations()!=null) {
             Print.out("adding from append");
-            getWeatherForecast(latLong, false, repository.getSavedLocations().size());
+            getWeatherForecast(latLong, false,0);
             repository.saveLocation(latLong);
-        }
-
     }
     public void refreshWeatherForecast(String latLong,int row){
 
-//        Print.out("refresh from append");
-       // repository.saveLocation(latLong);
-//        Print.out("reposize:"+ repository.getSavedLocations().size());
         getWeatherForecast(latLong,true,row);
-
     }
+
+    public void selectLocationRequest(){
+        locationService.LaunchPlacesIntentForResult(screen.getActivity());
+    }
+    public void handleOnActivityResult(int requestCode,int resultCode){
+        String latLong;
+        latLong=locationService.getPlacesResult(requestCode,resultCode,screen.getIntentData(),screen.getActivity());
+        appendWeatherForecast(latLong);
+    }
+
 
     public void rxUnSubscribe(){
         if(subscription!=null && !subscription.isUnsubscribed())
             subscription.unsubscribe();
     }
+
 }

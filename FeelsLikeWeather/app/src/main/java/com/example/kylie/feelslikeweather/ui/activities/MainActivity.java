@@ -1,9 +1,10 @@
-package com.example.kylie.feelslikeweather;
+package com.example.kylie.feelslikeweather.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,20 +16,16 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.kylie.feelslikeweather.R;
 import com.example.kylie.feelslikeweather.models.SharedPreferencesRepository;
-import com.example.kylie.feelslikeweather.models.wrappers.DarkSkyPOJOWrapper;
+import com.example.kylie.feelslikeweather.models.wrappers.LocationService;
+import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
 import com.example.kylie.feelslikeweather.models.wrappers.Precipitation;
 import com.example.kylie.feelslikeweather.presenters.MainActivityPresenter;
 import com.example.kylie.feelslikeweather.rest.WeatherService;
 import com.example.kylie.feelslikeweather.screens.CurrentWeatherScreen;
 import com.example.kylie.feelslikeweather.ui.CurrentWeatherAdapter;
-import com.example.kylie.feelslikeweather.utitlity.Print;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.example.kylie.feelslikeweather.utils.Print;
 
 import java.util.ArrayList;
 
@@ -37,13 +34,15 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements CurrentWeatherScreen {
     TextView textblock;
-    ProgressBar progressBar;
+    SwipeRefreshLayout progressBar;
     RecyclerView currentWeatherRecycler;
     CurrentWeatherAdapter currentWeatherAdapter;
     MainActivityPresenter presenter;
+
+    Intent data;
     private boolean rxCallInWorks;
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
-
+    int refreshCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,15 +51,16 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
-
+        refreshCount=0;
         textblock = (TextView) findViewById(R.id.txt_main);
         currentWeatherRecycler = (RecyclerView)findViewById(R.id.recycle_main);
-        progressBar = (ProgressBar) findViewById(R.id.pBar_main);
-        progressBar.setVisibility(View.GONE);
+        progressBar = (SwipeRefreshLayout) findViewById(R.id.p_bar_main);
+        manageRefresh();
         rxCallInWorks = false;
         WeatherService weatherService= WeatherService.getInstance();
         SharedPreferencesRepository pref = new SharedPreferencesRepository(this);
-        presenter = new MainActivityPresenter(this, weatherService,pref);
+        LocationService locationService = new LocationService();
+        presenter = new MainActivityPresenter(this, weatherService,pref, locationService);
         initializeRecyclerView();
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -77,37 +77,39 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
             }
         });
 
+
         presenter.refreshCurrentWeatherScreen();
-        progressBar.setVisibility(View.GONE);
     }
     @Override
-    public void loadWeatherLocationsFromSettings(ArrayList<String> settingsLocations){
-        progressBar.setVisibility(View.VISIBLE);
-        rxCallInWorks = true;
+    public void loadWeatherLocationsFromSettings(int numberOfSpacesToReserve){
+       // enqueueRefresh();
         //get array from settings
-        currentWeatherAdapter.setInitialListSize(settingsLocations.size());
-        int i =0;
-        for(String location : settingsLocations){
-            presenter.refreshWeatherForecast(location,i);
-            i++;
-        }
+        currentWeatherAdapter.prepareSpaceToLoadLocationsAsBatch(numberOfSpacesToReserve);
+        rxCallInWorks = true;
+      //  dequeueRefresh();
     }
 
     @Override
-    public void addNewLocationToWeatherList(DarkSkyPOJOWrapper forecast, int position) {
+    public AppCompatActivity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void addNewLocationToWeatherList(WeatherWrapper forecast) {
         //hide swirl
-
-        progressBar.setVisibility(View.GONE);
-        currentWeatherAdapter.addWeatherRow(forecast,position);
-        showMessage("Location Added");
+        enqueueRefresh();
+        currentWeatherAdapter.addWeatherRow(forecast);
         rxCallInWorks= false;
+        showMessage("Location Added");
+        dequeueRefresh();
     }
 
     @Override
-    public void refreshWeatherList(DarkSkyPOJOWrapper forecast, int position) {
-        progressBar.setVisibility(View.GONE);
+    public void refreshWeatherListView(WeatherWrapper forecast, int position) {
+        enqueueRefresh();
         currentWeatherAdapter.updateWeatherRow(forecast,position);
         showMessage("Location(s) Updated");
+        dequeueRefresh();
         rxCallInWorks= false;
     }
 
@@ -145,12 +147,12 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     @Override
     public void failedCall() {
         Print.out("MY API ISSUE");
-        progressBar.setVisibility(View.GONE);
+        dequeueRefresh();
         rxCallInWorks= false;
     }
 
     @Override
-    public void openDetailedWeatherActivity(DarkSkyPOJOWrapper forecast) {
+    public void openDetailedWeatherActivity(WeatherWrapper forecast) {
         Intent intent = new Intent(this, DetailedWeatherActivity.class);
         Precipitation p = new Precipitation();
         intent.putExtra("Forecast",forecast);
@@ -170,34 +172,38 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
 }
 
     public void selectLocation(){
-        try {
-            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
-                            .build(this);
-            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-        } catch (GooglePlayServicesRepairableException e) {
-            showMessage("Repairable?");
-        } catch (GooglePlayServicesNotAvailableException e) {
-            showMessage("Service Not Available");
-        }
+        presenter.selectLocationRequest();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlaceAutocomplete.getPlace(this, data);
-                String latLong = place.getLatLng().latitude+","+place.getLatLng().longitude;
-                showMessage(latLong);
-                presenter.appendWeatherForecast(latLong);
-            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-                Status status = PlaceAutocomplete.getStatus(this, data);
-                Print.out(status.getStatusMessage());
-                showMessage(status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
-            }
+        this.data = data;
+        presenter.handleOnActivityResult(requestCode,resultCode);
+
+    }
+    @Override
+    public Intent getIntentData(){
+        return data;
+    }
+
+    private void enqueueRefresh(){
+        refreshCount++;
+        manageRefresh();
+    }
+    private void dequeueRefresh(){
+        refreshCount--;
+        manageRefresh();
+    }
+
+    private void manageRefresh() {
+        Print.out(refreshCount);
+        if(refreshCount==0){
+            progressBar.setRefreshing(false);
+        }else{
+            progressBar.setRefreshing(true);
         }
     }
+
 
     @Override
     protected void onPause() {
@@ -209,8 +215,8 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     @Override
     protected void onResume() {//if interrupted
         super.onResume();
-//        if(rxCallInWorks)
-//            presenter.getWeatherForecast(locations.get(0),false,0);
+        if(rxCallInWorks);
+           //presenter.refreshCurrentWeatherScreen();
     }
 
 }

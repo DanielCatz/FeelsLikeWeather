@@ -1,4 +1,4 @@
-package com.example.kylie.feelslikeweather.utitlity;
+package com.example.kylie.feelslikeweather.utils;
 
 import android.util.Log;
 

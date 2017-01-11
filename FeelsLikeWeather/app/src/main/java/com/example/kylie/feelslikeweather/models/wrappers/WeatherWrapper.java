@@ -1,7 +1,6 @@
 package com.example.kylie.feelslikeweather.models.wrappers;
 
 import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
-import com.example.kylie.feelslikeweather.utitlity.Print;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -11,10 +10,17 @@ import java.text.SimpleDateFormat;
  * Created by Kylie on 12/28/2016.
  */
 
-public class DarkSkyPOJOWrapper implements Serializable {
+public class WeatherWrapper implements Serializable {
 
     private final DarkSkyForecast forecast;
-
+    private String city;
+    private String state;
+    private String[] location;
+    private String time;
+    private String currentSummary;
+    private Precipitation currentPrecipitation;
+    private String currentIconRes;
+    private Double currentTemperature;
     public String[] getLocation() {
         return location;
     }
@@ -63,21 +69,16 @@ public class DarkSkyPOJOWrapper implements Serializable {
         this.currentTemperature = currentTemperature;
     }
 
-    private String[] location;
-    private String time;
-    private String currentSummary;
-    private Precipitation currentPrecipitation;
-    private String currentIconRes;
-    private Double currentTemperature;
 
-    public DarkSkyPOJOWrapper(DarkSkyForecast forecast) {
+
+    public WeatherWrapper(DarkSkyForecast forecast) {
         this.forecast = forecast;
         extractCurrentWeather();
     }
 
     private void extractCurrentWeather() {
         location = getLocation(forecast.getLatitude(), forecast.getLongitude());
-        time =getDateTime(forecast.getCurrently().getTime(),false);
+        time =getDateTime(forecast.getCurrently().getTime(),true);
         currentSummary =  forecast.getCurrently().getSummary();
         currentIconRes = getIcon();
         if(forecast.getCurrently().getPrecipProbability()>0) {
@@ -102,9 +103,9 @@ public class DarkSkyPOJOWrapper implements Serializable {
         java.sql.Date date = new java.sql.Date(timeStamp.getTime());
         SimpleDateFormat simpleDateFormat;
         if(isTwelveHourFormat){
-        simpleDateFormat = new SimpleDateFormat("hh-mm-ss-aa");
+        simpleDateFormat = new SimpleDateFormat("h:mm a");
         }else{
-            simpleDateFormat = new SimpleDateFormat("kk-mm-ss");
+            simpleDateFormat = new SimpleDateFormat("k:mm");
         }
         String format = simpleDateFormat.format(date);
         return format;
@@ -119,5 +120,21 @@ public class DarkSkyPOJOWrapper implements Serializable {
     public String getIcon() {
         //string resource mapping
         return null;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getState() {
+        return state;
     }
 }
