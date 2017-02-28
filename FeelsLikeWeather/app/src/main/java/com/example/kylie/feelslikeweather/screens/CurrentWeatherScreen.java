@@ -19,6 +19,8 @@ public interface CurrentWeatherScreen {
 
     public void failedCall();
 
+    public void showToast(String msg);
+
     public void openDetailedWeatherActivity(WeatherWrapper forecast);
 
     public void addNewLocationToWeatherList(WeatherWrapper forecast);
@@ -29,4 +31,6 @@ public interface CurrentWeatherScreen {
 
     public AppCompatActivity getActivity();
     public Intent getIntentData();
+
+    public void deleteLocationAtPosition(int position);
 }

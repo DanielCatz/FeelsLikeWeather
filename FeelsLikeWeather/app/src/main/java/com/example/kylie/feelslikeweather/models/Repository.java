@@ -10,5 +10,5 @@ public interface Repository {
     public ArrayList<String> getSavedLocations();
     public void saveLocation(String latLong);
     public void clearLocations();
-
+    public boolean deleteLocationAtPosition(int position);
 }

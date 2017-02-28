@@ -27,15 +27,13 @@ TextView testText;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
             }
         });
     }
 
     public void acceptBundle(){
         WeatherWrapper forecast =(WeatherWrapper)getIntent().getSerializableExtra("Forecast");
-        Print.out(forecast.getTime());
         testText.setText(forecast.getTempString());
 //        Precipitation forecast =(Precipitation)getIntent().getSerializableExtra("Forecast");
 //        Print.out(forecast.amount);

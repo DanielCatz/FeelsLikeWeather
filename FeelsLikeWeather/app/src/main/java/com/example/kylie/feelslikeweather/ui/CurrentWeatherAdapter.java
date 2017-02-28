@@ -1,10 +1,13 @@
 package com.example.kylie.feelslikeweather.ui;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.example.kylie.feelslikeweather.R;
@@ -27,6 +30,7 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
     public CurrentWeatherAdapter(CurrentWeatherScreen screen){
         this.forecasts =new ArrayList<>();
         this.screen= screen;
+
     }
 
     public void addWeatherRow(WeatherWrapper event){
@@ -42,6 +46,11 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
         forecasts.set(position,event);
    //     Print.out("postupdate"+forecasts.toString());
         notifyDataSetChanged();
+    }
+
+    public void removeWeatherRow(int position){
+        forecasts.remove(position);
+        notifyItemRemoved(position);
     }
 
     @Override
@@ -76,7 +85,7 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
         TextView txtState;
         TextView txtCity;
         TextView txtTemp;
-        TextView txtTime;
+        TextClock txtTime;
         ImageView imgIcon;
         WeatherWrapper forecast;
         //TODO:deal with doodads
@@ -85,8 +94,9 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
             super(view);
             txtState = (TextView) view.findViewById(R.id.txt_cur_state);
             txtTemp = (TextView) view.findViewById(R.id.txt_cur_temp);
-            txtTime = (TextView) view.findViewById(R.id.txt_cur_time);
+            txtTime = (TextClock) view.findViewById(R.id.txt_cur_time);
             txtCity = (TextView) view.findViewById(R.id.txt_cur_city);
+            imgIcon = (ImageView) view.findViewById(R.id.img_cur_icon);
             view.setOnClickListener(mClickListener);
             //TODO: deal with icon
         }
@@ -97,16 +107,32 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
                 txtState.setText(forecast.getState());
                 txtCity.setText(forecast.getCity());
                 txtTemp.setText(forecast.getTempString());
-                txtTime.setText(forecast.getTime());
+                txtTime.setFormat24Hour(null);
+//                txtTime.getFormat12Hour();
+                txtTime.setTimeZone(forecast.getTimezone());
+
+                //TODO: refactor this to weather wrapper
+                if (forecast.getCurrentIconRes() != null && forecast.getCurrentIconRes() != "") {
+                    imgIcon.setImageResource(getImagename(forecast));
+                }
+
             }
+        }
+
+        private int getImagename(WeatherWrapper forecast) {
+            Print.out(forecast.getCurrentIconRes());
+            String iconName = forecast.getCurrentIconRes().replace("-","");
+            Resources res = imgIcon.getContext().getResources();
+            return res.getIdentifier(iconName,"mipmap",imgIcon.getContext().getPackageName());
+
+
+
         }
 
         View.OnClickListener mClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Print.out("tapped item" + getAdapterPosition());
-//                updateCard();
-//                updateCardAt();
                 screen.openDetailedWeatherActivity(forecast);
             }
         };

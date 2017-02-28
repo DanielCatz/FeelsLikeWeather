@@ -23,4 +23,11 @@ public class Print {
         origin= origin.substring(origin.indexOf('('));
         Log.wtf(origin,String.valueOf(message));
     }
+
+    public static void out(long message) {
+        StackTraceElement[] t= new Throwable().getStackTrace();
+        String origin = t[1].toString();//line of where i wa called
+        origin= origin.substring(origin.indexOf('('));
+        Log.wtf(origin,String.valueOf(message));
+    }
 }

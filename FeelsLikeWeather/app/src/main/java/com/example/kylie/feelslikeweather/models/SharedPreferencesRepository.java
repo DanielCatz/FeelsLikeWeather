@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.example.kylie.feelslikeweather.utils.Print;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Kylie on 12/29/2016.
@@ -18,7 +19,8 @@ public class SharedPreferencesRepository implements Repository {
 
     public SharedPreferencesRepository(Context context){
         locations =new ArrayList<>();
-        preferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences = context.getSharedPreferences("locations",Context.MODE_PRIVATE);
     }
 
     public ArrayList<String> getSavedLocations(){
@@ -28,9 +30,11 @@ public class SharedPreferencesRepository implements Repository {
         }
         locations.clear();
         String[] tempArray= locationString.split("[|]");
-        for(int i = 0; i <tempArray.length;i++){
-            locations.add(tempArray[i]);
-        }
+//        for(int i = 0; i <tempArray.length;i++){
+//            locations.add(tempArray[i]);
+//        }
+
+        locations.addAll(Arrays.asList(tempArray));
         //Print.out("getSavedlocations: "+ locations.toString());
         return locations;
     }
@@ -38,22 +42,20 @@ public class SharedPreferencesRepository implements Repository {
     public void saveLocation(String latLong){
         locations.add(latLong);
         SharedPreferences.Editor edit = preferences.edit();
-        StringBuilder locationsString =new StringBuilder();
-
-        for(int i= 0;i<locations.size();i++){
-            Print.out("location build "+locations.get(i));
-            locationsString.append(locations.get(i));
-            if (i!=locations.size()-1){
-                locationsString.append("|");
-            }
-        }
-
-        Print.out("location result "+locationsString.toString());
-        edit.putString("locations",locationsString.toString());
+        edit.putString("locations",getDelimitedLocationString());
         edit.apply();
     }
 
-
+    public boolean deleteLocationAtPosition(int position){
+        if(locations.size()>position){
+            locations.remove(position);
+            SharedPreferences.Editor edit = preferences.edit();
+            edit.putString("locations",getDelimitedLocationString());
+            edit.apply();
+            return false;
+        }
+        return true;
+    }
 
     public void clearLocations(){
         SharedPreferences.Editor edit = preferences.edit();
@@ -62,5 +64,16 @@ public class SharedPreferencesRepository implements Repository {
         edit.clear();
         edit.commit();
         Print.out("Emptied:"+preferences.getString("locations","empty"));
+    }
+
+    private String getDelimitedLocationString(){
+        StringBuilder locationsString =new StringBuilder();
+        for(int i= 0;i<locations.size();i++){
+            locationsString.append(locations.get(i));
+            if (i!=locations.size()-1){
+                locationsString.append("|");
+            }
+        }
+        return locationsString.toString();
     }
 }

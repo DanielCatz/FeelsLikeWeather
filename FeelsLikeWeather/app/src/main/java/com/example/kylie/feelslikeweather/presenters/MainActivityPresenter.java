@@ -25,7 +25,6 @@ public class MainActivityPresenter{
     private Subscription subscription;
     private Repository repository;
     private LocationService locationService;
-
     public MainActivityPresenter(CurrentWeatherScreen screen, WeatherService weatherService, Repository repository, LocationService locationService){
         this.screen = screen;
         this.weatherService = weatherService;
@@ -33,13 +32,12 @@ public class MainActivityPresenter{
         this.locationService =  locationService;
     }
 
-    public void requestRefreshCurrentWeatherScreen(){
+    public void handleRefreshCurrentWeatherScreen(){
         ArrayList<String> prefLocations = repository.getSavedLocations();
         if(prefLocations==null)
         {
             screen.loadWeatherLocationsFromSettings(0);
         }else{
-
             screen.loadWeatherLocationsFromSettings(prefLocations.size());
             int i = 0;
             for (String location : prefLocations) {
@@ -51,21 +49,28 @@ public class MainActivityPresenter{
     }
 
 
-    public void requestClearSettings(){
+    public void handleClearSettings(){
         repository.clearLocations();
-        requestRefreshCurrentWeatherScreen();
+        this.handleRefreshCurrentWeatherScreen();
+    }
+
+    public void handleDeleteWeatherLocation(int position){
+        repository.deleteLocationAtPosition(position);
+            screen.deleteLocationAtPosition(position);
+
     }
 
 
 
     private void getWeatherForecast(final String latLong, final boolean isUpdate, final int position){
+
         String key = weatherService.getKey();
         Observable<DarkSkyForecast> call = (Observable<DarkSkyForecast>)
                 weatherService.getPreparedObservable(weatherService.getAPI().getWeatherForecast(key,latLong), DarkSkyForecast.class, false, false);
-
         subscription = call.subscribe(new Observer<DarkSkyForecast>() {
                                           @Override
                                           public void onCompleted() {
+                                              //screen.showToast("Done");
 
                                           }
 
@@ -86,6 +91,7 @@ public class MainActivityPresenter{
                                                   screen.addNewLocationToWeatherList(wrapper);
                                               }
 
+
                                           }
                                       }
         );
@@ -102,10 +108,11 @@ public class MainActivityPresenter{
         getWeatherForecast(latLong,true,row);
     }
 
-    public void requestSelectLocation(){
+    public void handleSelectLocation(){
         locationService.LaunchPlacesIntentForResult(screen.getActivity());
     }
-    public void requestHandleOnActivityResult(int requestCode, int resultCode){
+
+    public void handleOnActivityResult(int requestCode, int resultCode){
         String latLong;
         latLong=locationService.getPlacesResult(requestCode,resultCode,screen.getIntentData(),screen.getActivity());
         appendWeatherForecast(latLong);

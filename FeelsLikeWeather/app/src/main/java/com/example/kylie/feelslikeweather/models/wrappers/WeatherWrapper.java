@@ -1,10 +1,14 @@
 package com.example.kylie.feelslikeweather.models.wrappers;
 
 import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
+import com.example.kylie.feelslikeweather.utils.Print;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * Created by Kylie on 12/28/2016.
@@ -16,18 +20,25 @@ public class WeatherWrapper implements Serializable {
     private String city;
     private String state;
     private String[] location;
-    private String time;
     private String currentSummary;
     private Precipitation currentPrecipitation;
     private String currentIconRes;
     private Double currentTemperature;
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
+
+    private String timezone;
+
     public String[] getLocation() {
         return location;
     }
 
-    public String getTime() {
-        return time;
-    }
 
     public String getCurrentSummary() {
         return currentSummary;
@@ -49,9 +60,6 @@ public class WeatherWrapper implements Serializable {
         this.location = location;
     }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
 
     public void setCurrentSummary(String currentSummary) {
         this.currentSummary = currentSummary;
@@ -77,16 +85,14 @@ public class WeatherWrapper implements Serializable {
     }
 
     private void extractCurrentWeather() {
+        timezone = forecast.getTimezone();
         location = getLocation(forecast.getLatitude(), forecast.getLongitude());
-        time =getDateTime(forecast.getCurrently().getTime(),true);
         currentSummary =  forecast.getCurrently().getSummary();
-        currentIconRes = getIcon();
+        currentIconRes = forecast.getCurrently().getIcon();
         if(forecast.getCurrently().getPrecipProbability()>0) {
             currentPrecipitation = getPrecipitation();
         }
         currentTemperature = forecast.getCurrently().getTemperature();
-
-
     }
 
     public String getTempString(){
@@ -98,27 +104,17 @@ public class WeatherWrapper implements Serializable {
         return new String[]{latitude.toString(),longitude.toString()};
     }
 
-    private String getDateTime(long unixTime, boolean isTwelveHourFormat) {
-        java.sql.Timestamp timeStamp = new Timestamp(unixTime * 1000);
-        java.sql.Date date = new java.sql.Date(timeStamp.getTime());
-        SimpleDateFormat simpleDateFormat;
-        if(isTwelveHourFormat){
-        simpleDateFormat = new SimpleDateFormat("h:mm a");
-        }else{
-            simpleDateFormat = new SimpleDateFormat("k:mm");
-        }
-        String format = simpleDateFormat.format(date);
-        return format;
-    }
-
     public Precipitation getPrecipitation() {
 
 
         return null;
     }
 
-    public String getIcon() {
-        //string resource mapping
+    public String getProperIcon(){
+
+
+
+
         return null;
     }
 

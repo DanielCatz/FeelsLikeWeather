@@ -14,17 +14,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kylie.feelslikeweather.R;
 import com.example.kylie.feelslikeweather.models.SharedPreferencesRepository;
 import com.example.kylie.feelslikeweather.models.wrappers.LocationService;
 import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
-import com.example.kylie.feelslikeweather.models.wrappers.Precipitation;
 import com.example.kylie.feelslikeweather.presenters.MainActivityPresenter;
 import com.example.kylie.feelslikeweather.rest.WeatherService;
 import com.example.kylie.feelslikeweather.screens.CurrentWeatherScreen;
 import com.example.kylie.feelslikeweather.ui.CurrentWeatherAdapter;
 import com.example.kylie.feelslikeweather.utils.Print;
+import com.github.brnunes.swipeablerecyclerview.SwipeableRecyclerViewTouchListener;
 
 //import com.google.android.gms.common.api.GoogleApiClient;
 //import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Bind fields
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -51,14 +53,18 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
         refreshCount=0;
         textblock = (TextView) findViewById(R.id.txt_main);
         currentWeatherRecycler = (RecyclerView)findViewById(R.id.recycle_main);
+
+
         progressBar = (SwipeRefreshLayout) findViewById(R.id.p_bar_main);
-        manageRefresh();
         rxCallInWorks = false;
+        manageRefresh();
+        initializeRecyclerView();
+
+        //Data
         WeatherService weatherService= WeatherService.getInstance();
         SharedPreferencesRepository pref = new SharedPreferencesRepository(this);
         LocationService locationService = new LocationService();
         presenter = new MainActivityPresenter(this, weatherService,pref, locationService);
-        initializeRecyclerView();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,20 +76,57 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.requestClearSettings();
+                presenter.handleClearSettings();
+            }
+        });
+
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presenter.handleClearSettings();
             }
         });
 
         progressBar.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.requestRefreshCurrentWeatherScreen();
+                presenter.handleRefreshCurrentWeatherScreen();
             }
         });
 
 
-        presenter.requestRefreshCurrentWeatherScreen();
+        presenter.handleRefreshCurrentWeatherScreen();
+
     }
+
+    private SwipeableRecyclerViewTouchListener getSwipeTouchListener(RecyclerView currentWeatherRecycler) {
+    return new SwipeableRecyclerViewTouchListener(currentWeatherRecycler, new SwipeableRecyclerViewTouchListener.SwipeListener() {
+        @Override
+        public boolean canSwipeLeft(int position) {
+            return true;
+        }
+
+        @Override
+        public boolean canSwipeRight(int position) {
+            return true;
+        }
+
+        @Override
+        public void onDismissedBySwipeLeft(RecyclerView recyclerView, int[] reverseSortedPositions) {
+            for (int position : reverseSortedPositions) {
+                presenter.handleDeleteWeatherLocation(position);
+            }
+        }
+
+        @Override
+        public void onDismissedBySwipeRight(RecyclerView recyclerView, int[] reverseSortedPositions) {
+            for (int position : reverseSortedPositions) {
+                presenter.handleDeleteWeatherLocation(position);
+            }
+        }
+    });
+    }
+
     @Override
     public void loadWeatherLocationsFromSettings(int numberOfSpacesToReserve){
        // enqueueRefresh();
@@ -124,6 +167,9 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
         currentWeatherRecycler.setItemAnimator(new DefaultItemAnimator());
         currentWeatherAdapter = new CurrentWeatherAdapter(this);
         currentWeatherRecycler.setAdapter(currentWeatherAdapter);
+
+        SwipeableRecyclerViewTouchListener swipeTouchListener = getSwipeTouchListener(currentWeatherRecycler);
+        currentWeatherRecycler.addOnItemTouchListener(swipeTouchListener);
     }
 
     @Override
@@ -156,11 +202,16 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     }
 
     @Override
+    public void showToast(String msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void openDetailedWeatherActivity(WeatherWrapper forecast) {
         Intent intent = new Intent(this, DetailedWeatherActivity.class);
-        Precipitation p = new Precipitation();
         intent.putExtra("Forecast",forecast);
         startActivity(intent);
+        //animation stuff
 //        intent.putExtra("Forecast",p);
 //        intent.putExtra(DetailActivity.CONTACT_MD5_EXTRA, contactMd5);
 //        intent.putExtra(DetailActivity.CONTACT_THUMBNAIL_EXTRA, thumbnail);
@@ -176,18 +227,23 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
 }
 
     public void selectLocation(){
-        presenter.requestSelectLocation();
+        presenter.handleSelectLocation();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         this.data = data;
-        presenter.requestHandleOnActivityResult(requestCode,resultCode);
-
+        presenter.handleOnActivityResult(requestCode,resultCode);
     }
+
     @Override
     public Intent getIntentData(){
         return data;
+    }
+
+    @Override
+    public void deleteLocationAtPosition(int position) {
+        currentWeatherAdapter.removeWeatherRow(position);
     }
 
     private void enqueueRefresh(){
@@ -201,10 +257,12 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
 
     private void manageRefresh() {
         Print.out(refreshCount);
-        if(refreshCount==0){
+        if(refreshCount<=0){
+            refreshCount=0;
             progressBar.setRefreshing(false);
-        }else{
-            progressBar.setRefreshing(true);
+        }else if(refreshCount==1){
+                progressBar.setRefreshing(true);
+
         }
     }
 
@@ -220,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
     protected void onResume() {//if interrupted
         super.onResume();
         if(rxCallInWorks);
-           //presenter.requestRefreshCurrentWeatherScreen();
+           //presenter.handleRefreshCurrentWeatherScreen();
     }
 
 }
