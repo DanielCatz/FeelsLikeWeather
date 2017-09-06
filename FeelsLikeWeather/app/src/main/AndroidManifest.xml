@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activities.DetailedWeatherActivity"
+            android:name=".ui.activities.WeatherOverviewActivity"
             android:label="@string/title_activity_detailed_weather"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

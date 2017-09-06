@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
         refreshCount=0;
         textblock = (TextView) findViewById(R.id.txt_main);
         currentWeatherRecycler = (RecyclerView)findViewById(R.id.recycle_main);
@@ -73,19 +72,17 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
             }
         });
 
+        //For debugging- to delete
+        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab2.setVisibility(View.GONE);
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 presenter.handleClearSettings();
             }
         });
+        //delete
 
-        fab2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                presenter.handleClearSettings();
-            }
-        });
 
         progressBar.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -208,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements CurrentWeatherScr
 
     @Override
     public void openDetailedWeatherActivity(WeatherWrapper forecast) {
-        Intent intent = new Intent(this, DetailedWeatherActivity.class);
+        Intent intent = new Intent(this, WeatherOverviewActivity.class);
         intent.putExtra("Forecast",forecast);
         startActivity(intent);
         //animation stuff

@@ -1,14 +1,9 @@
 package com.example.kylie.feelslikeweather.models.wrappers;
 
 import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
-import com.example.kylie.feelslikeweather.utils.Print;
+import com.example.kylie.feelslikeweather.models.darkskypojos.Datum_;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 /**
  * Created by Kylie on 12/28/2016.
@@ -20,13 +15,21 @@ public class WeatherWrapper implements Serializable {
     private String city;
     private String state;
     private String[] location;
-    private String currentSummary;
-    private Precipitation currentPrecipitation;
-    private String currentIconRes;
-    private Double currentTemperature;
+    private int sunriseTime;
+    private int sunsetTime;
+
+    private Report current;
+
+    private HourWrapper hourWrapper;
+    private MinuteWrapper minuteWrapper;
+    private DailyWrapper dailyWrapper;
 
     public String getTimezone() {
         return timezone;
+    }
+
+    public Report getCurrent() {
+        return current;
     }
 
     public void setTimezone(String timezone) {
@@ -40,67 +43,96 @@ public class WeatherWrapper implements Serializable {
     }
 
 
-    public String getCurrentSummary() {
-        return currentSummary;
-    }
 
-    public Precipitation getCurrentPrecipitation() {
-        return currentPrecipitation;
-    }
 
-    public String getCurrentIconRes() {
-        return currentIconRes;
-    }
 
-    public Double getCurrentTemperature() {
-        return currentTemperature;
-    }
+
+
 
     public void setLocation(String[] location) {
         this.location = location;
     }
 
 
-    public void setCurrentSummary(String currentSummary) {
-        this.currentSummary = currentSummary;
-    }
 
-    public void setCurrentPrecipitation(Precipitation currentPrecipitation) {
-        this.currentPrecipitation = currentPrecipitation;
-    }
 
-    public void setCurrentIconRes(String currentIconRes) {
-        this.currentIconRes = currentIconRes;
-    }
 
-    public void setCurrentTemperature(Double currentTemperature) {
-        this.currentTemperature = currentTemperature;
-    }
+
+
 
 
 
     public WeatherWrapper(DarkSkyForecast forecast) {
+        //TODO: May need this for detailed view
         this.forecast = forecast;
+        hourWrapper = new HourWrapper();
+        current = new Report();
         extractCurrentWeather();
+        extractHour();
     }
 
     private void extractCurrentWeather() {
+
+
         timezone = forecast.getTimezone();
         location = getLocation(forecast.getLatitude(), forecast.getLongitude());
-        currentSummary =  forecast.getCurrently().getSummary();
-        currentIconRes = forecast.getCurrently().getIcon();
+        //TODO: Find out how to set time
         if(forecast.getCurrently().getPrecipProbability()>0) {
-            currentPrecipitation = getPrecipitation();
+            //Precipitation
+
         }
-        currentTemperature = forecast.getCurrently().getTemperature();
+        current.setDewPoint(forecast.getCurrently().getDewPoint());
+        current.setHumidity(forecast.getCurrently().getHumidity());
+        current.setPressure(forecast.getCurrently().getPressure());
+        current.setWindBearing(forecast.getCurrently().getWindBearing());
+        current.setWindSpeed(forecast.getCurrently().getWindSpeed());
+        current.setSummary(forecast.getCurrently().getSummary());
+        current.setIcon(forecast.getCurrently().getIcon());
+        current.setTemperature(forecast.getCurrently().getTemperature().floatValue());
+        current.setVisibility(forecast.getCurrently().getVisibility());
+        current.setApparentTemperature(forecast.getCurrently().getApparentTemperature());
+
     }
 
-    public String getTempString(){
-       return Math.round(currentTemperature)+"°";
+
+
+
+    private void extractDay(){
+
+
     }
+
+    private void extractHour(){
+
+        hourWrapper.setSummary(forecast.getHourly().getSummary());
+        hourWrapper.setIcon(forecast.getHourly().getIcon());
+
+        for(Datum_ entry : forecast.getHourly().getData()){
+            Report hour = new Report();
+            hour.setApparentTemperature(entry.getApparentTemperature());
+            hour.setCloudCover(entry.getCloudCover());
+            hour.setDewPoint(entry.getDewPoint());
+            hour.setHumidity(entry.getHumidity());
+            hour.setIcon(entry.getIcon());
+            hour.setOzone(entry.getOzone());
+            hour.setPrecipAccumulation(entry.getPrecipAccumulation());
+            hour.setPrecipProbability(entry.getPrecipProbability());
+            hour.setPrecipType(entry.getPrecipType());
+            hour.setPressure(entry.getPressure());
+            hour.setPrecipIntensity(entry.getPrecipIntensity());
+            hour.setSummary(entry.getSummary());
+            hour.setTemperature(entry.getTemperature().floatValue());
+            hour.setTime(entry.getTime());
+            hour.setVisibility(entry.getVisibility());
+            hour.setWindBearing(entry.getWindBearing());
+            hour.setWindSpeed(entry.getWindSpeed());
+            hourWrapper.addHour(hour);
+        }
+    }
+
+
 
     private String[] getLocation(Double latitude, Double longitude) {
-        //TODO:Stub
         return new String[]{latitude.toString(),longitude.toString()};
     }
 
@@ -110,13 +142,7 @@ public class WeatherWrapper implements Serializable {
         return null;
     }
 
-    public String getProperIcon(){
 
-
-
-
-        return null;
-    }
 
     public void setCity(String city) {
         this.city = city;
@@ -133,4 +159,6 @@ public class WeatherWrapper implements Serializable {
     public String getState() {
         return state;
     }
+
+
 }

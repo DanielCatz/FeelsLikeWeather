@@ -85,6 +85,7 @@ public class MainActivityPresenter{
                                               WeatherWrapper wrapper = new WeatherWrapper(forecast);
                                               wrapper.setState(locationService.getState(screen.getActivity(),latLong));
                                               wrapper.setCity(locationService.getCity(screen.getActivity(),latLong));
+
                                               if(isUpdate){
                                                   screen.refreshWeatherListView(wrapper,position);
                                               }else{
