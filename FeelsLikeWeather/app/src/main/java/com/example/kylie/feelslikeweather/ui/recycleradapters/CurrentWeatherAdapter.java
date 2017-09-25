@@ -1,4 +1,4 @@
-package com.example.kylie.feelslikeweather.ui;
+package com.example.kylie.feelslikeweather.ui.recycleradapters;
 
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -83,6 +83,8 @@ public class CurrentWeatherAdapter extends RecyclerView.Adapter {
             }
         notifyDataSetChanged();
     }
+
+
 
 
 }

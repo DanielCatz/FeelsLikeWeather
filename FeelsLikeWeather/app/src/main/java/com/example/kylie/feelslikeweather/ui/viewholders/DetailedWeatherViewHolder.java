@@ -1,5 +1,6 @@
 package com.example.kylie.feelslikeweather.ui.viewholders;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -80,6 +81,9 @@ public class DetailedWeatherViewHolder extends RecyclerView.ViewHolder implement
         txtFeelsValue.setText(forecast.getCurrent().getApparentTemperature().toString());
         txtPressureValue.setText(forecast.getCurrent().getPressure().toString());
         txtWindSpeed.setText(forecast.getCurrent().getWindSpeed().toString());
+        //TODO: get the right values bound
+        //deal with the float values (trunk)
+
 //
 //        txtWindSpeed.setText(forecast.);//expose
 //        txtWindDirection.setText(R.string.det_winddirection_txt);//expose
@@ -105,8 +109,10 @@ public class DetailedWeatherViewHolder extends RecyclerView.ViewHolder implement
             this.forecast= forecast;
             if(forecast!=null) {
                 setTextValues();
-
+                setMoonPhaseText();
                 setCardStyleByWeather(forecast.getCurrent().getFormattedWeatherString());
+                setStaticImages();
+                setWeatherImage();
             }
         }
 
@@ -228,5 +234,58 @@ public class DetailedWeatherViewHolder extends RecyclerView.ViewHolder implement
             }
         };
 
+        public void setMoonPhaseText(){
+            //    The fractional part of the lunation number during the given day: a value of 0 corresponds to a new moon, 0.25 to a first quarter moon, 0.5 to a full moon, and 0.75 to a last quarter moon. (The ranges in between these represent waxing crescent, waxing gibbous, waning gibbous, and waning crescent moons, respectively.)
+            double moonValue = forecast.getCurrent().getMoonPhase();
+            if (moonValue<0.75){
+                txtMoonPhase.setText("Waning");
+                txtMoonPhase2.setText("Crescent");
+            }
+            else if(moonValue ==0.75){
+                txtMoonPhase.setText("Last Quarter");
+                txtMoonPhase2.setText("Moon");
+            }
+            else if(moonValue < 0.50){
+                txtMoonPhase.setText("Waning");
+                txtMoonPhase2.setText("Gibbous");
+            }
+            else if(moonValue == 0.50){txtMoonPhase.setText("Full");
+                txtMoonPhase2.setText("Moon");}
+            else if(moonValue < 0.25){txtMoonPhase.setText("Waxing");
+                txtMoonPhase2.setText("Gibbous");}
+            else if(moonValue == 0.25){txtMoonPhase.setText("First Quarter");
+                txtMoonPhase2.setText("Moon");}
+            else if(moonValue < 0){txtMoonPhase.setText("Waxing");
+                txtMoonPhase2.setText("Crescent");}
+            else if(moonValue == 0){txtMoonPhase.setText("New");
+                txtMoonPhase2.setText("Moon");}
+        }
+
+    private int getIconPngResource(WeatherWrapper forecast) {
+        Resources res = imgWeather.getContext().getResources();
+        return res.getIdentifier(forecast.getCurrent().getFormattedWeatherString(),"mipmap",imgWeather.getContext().getPackageName());
+    }
+    private int getIconPngResourceFromString(String resName) {
+        Resources res = imgWeather.getContext().getResources();
+        return res.getIdentifier(resName,"mipmap",imgWeather.getContext().getPackageName());
+    }
+
+    private void setWeatherImage(){
+        imgWeather.setImageResource(getIconPngResource(forecast));
+    }
+
+    private void setStaticImages(){
+        imgDew.setImageResource(getIconPngResourceFromString("sleet"));
+        imgFeelsLike.setImageResource(getIconPngResourceFromString("sleet"));
+        imgHumidity.setImageResource(getIconPngResourceFromString("sleet"));
+        imgMoonPhase.setImageResource(getIconPngResourceFromString("sleet"));
+        imgPrecipitation.setImageResource(getIconPngResourceFromString("sleet"));
+        imgPressure.setImageResource(getIconPngResourceFromString("sleet"));
+        imgSunset.setImageResource(getIconPngResourceFromString("sleet"));
+        imgVisibility.setImageResource(getIconPngResourceFromString("sleet"));
+        imgWind.setImageResource(getIconPngResourceFromString("sleet"));
+
+
+    }
     }
 

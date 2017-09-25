@@ -11,8 +11,18 @@ import java.util.List;
  */
 public class HourWrapper extends RecyclerWrapper implements Serializable{
     private RecyclerComponentEnum type = RecyclerComponentEnum.HOURS;
+
+    public List<Report> getHours() {
+        return hours;
+    }
+
     private List<Report> hours;
     private String icon;
+
+    public String getSummary() {
+        return summary;
+    }
+
     private String summary;
 
 

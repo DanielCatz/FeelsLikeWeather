@@ -2,6 +2,8 @@ package com.example.kylie.feelslikeweather.models.wrappers;
 
 import com.example.kylie.feelslikeweather.models.darkskypojos.DarkSkyForecast;
 import com.example.kylie.feelslikeweather.models.darkskypojos.Datum_;
+import com.example.kylie.feelslikeweather.models.darkskypojos.Datum__;
+import com.example.kylie.feelslikeweather.utils.Print;
 
 import java.io.Serializable;
 
@@ -20,6 +22,9 @@ public class WeatherWrapper implements Serializable {
 
     private Report current;
 
+    public HourWrapper getHourly() {
+        return hourWrapper;
+    }
     private HourWrapper hourWrapper;
     private MinuteWrapper minuteWrapper;
     private DailyWrapper dailyWrapper;
@@ -32,6 +37,10 @@ public class WeatherWrapper implements Serializable {
         return current;
     }
 
+    public DailyWrapper getDaily(){
+        return dailyWrapper;
+    }
+
     public void setTimezone(String timezone) {
         this.timezone = timezone;
     }
@@ -41,13 +50,6 @@ public class WeatherWrapper implements Serializable {
     public String[] getLocation() {
         return location;
     }
-
-
-
-
-
-
-
 
     public void setLocation(String[] location) {
         this.location = location;
@@ -67,8 +69,10 @@ public class WeatherWrapper implements Serializable {
         this.forecast = forecast;
         hourWrapper = new HourWrapper();
         current = new Report();
+        dailyWrapper = new DailyWrapper();
         extractCurrentWeather();
         extractHour();
+        extractDays();
     }
 
     private void extractCurrentWeather() {
@@ -77,6 +81,7 @@ public class WeatherWrapper implements Serializable {
         timezone = forecast.getTimezone();
         location = getLocation(forecast.getLatitude(), forecast.getLongitude());
         //TODO: Find out how to set time
+
         if(forecast.getCurrently().getPrecipProbability()>0) {
             //Precipitation
 
@@ -91,13 +96,32 @@ public class WeatherWrapper implements Serializable {
         current.setTemperature(forecast.getCurrently().getTemperature().floatValue());
         current.setVisibility(forecast.getCurrently().getVisibility());
         current.setApparentTemperature(forecast.getCurrently().getApparentTemperature());
+        current.setMoonPhase(forecast.getDaily().getData().get(0).getMoonPhase());
 
     }
 
+    private void extractDays(){
 
+        dailyWrapper.setSummary(forecast.getDaily().getSummary());
+        forecast.getDaily().getIcon();
+        for(Datum__ day : forecast.getDaily().getData()){
+            Report entry = new Report();
+            entry.setDewPoint(day.getDewPoint());
+            entry.setHumidity(day.getHumidity());
+            entry.setPressure(day.getPressure());
+            entry.setWindBearing(day.getWindBearing());
+            entry.setWindSpeed(day.getWindSpeed());
+            entry.setSummary(day.getSummary());
+            entry.setIcon(day.getIcon());
+            entry.setTemperatureMax(day.getTemperatureMax().floatValue());
+            entry.setTemperatureMin(day.getTemperatureMin().floatValue());
+            entry.setVisibility(day.getVisibility());
+            entry.setApparentTemperature(forecast.getCurrently().getApparentTemperature());
+            entry.setMoonPhase(day.getMoonPhase());
+            dailyWrapper.addDay(entry);
 
+        }
 
-    private void extractDay(){
 
 
     }
@@ -159,6 +183,7 @@ public class WeatherWrapper implements Serializable {
     public String getState() {
         return state;
     }
+
 
 
 }

@@ -6,8 +6,8 @@
     android:id="@+id/detailed_weather_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="7dp"
-    android:layout_marginRight="7dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
     android:layout_marginTop="15dp"
     android:background="@android:color/darker_gray"
     android:orientation="vertical"
@@ -30,7 +30,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_weight="1"
-                android:scaleType="fitXY"
                 app:srcCompat="@mipmap/ic_launcher" />
 
             <LinearLayout

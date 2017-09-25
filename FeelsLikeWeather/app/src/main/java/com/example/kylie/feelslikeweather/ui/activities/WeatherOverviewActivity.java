@@ -8,21 +8,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.kylie.feelslikeweather.R;
 import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
 import com.example.kylie.feelslikeweather.presenters.WeatherOverviewPresenter;
 import com.example.kylie.feelslikeweather.screens.WeatherOverviewScreen;
-import com.example.kylie.feelslikeweather.ui.CurrentWeatherAdapter;
 import com.example.kylie.feelslikeweather.ui.recycleradapters.CompositeWeatherAdapter;
-import com.github.brnunes.swipeablerecyclerview.SwipeableRecyclerViewTouchListener;
 
 import java.util.ArrayList;
 
 public class WeatherOverviewActivity extends AppCompatActivity implements WeatherOverviewScreen {
     RecyclerView compositeRecycler;
-WeatherOverviewPresenter presenter;
+    WeatherOverviewPresenter presenter;
     private CompositeWeatherAdapter compositeWeatherAdapter;
 
     @Override

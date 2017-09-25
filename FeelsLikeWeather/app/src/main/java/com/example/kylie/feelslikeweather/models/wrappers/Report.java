@@ -60,6 +60,33 @@ public class Report implements Serializable {
     @SerializedName("precipAccumulation")
     @Expose
     private Double precipAccumulation;
+    private Double moonPhase;
+
+
+    public float getTemperatureMin() {
+        return temperatureMin;
+    }
+
+    public void setTemperatureMin(float temperatureMin) {
+        this.temperatureMin = temperatureMin;
+    }
+
+    public float getTemperatureMax() {
+        return temperatureMax;
+    }
+
+    public void setTemperatureMax(float temperatureMax) {
+        this.temperatureMax = temperatureMax;
+    }
+
+    @SerializedName("temperatureMin")
+    @Expose
+    private float temperatureMin;
+    @SerializedName("TemperatureMax")
+    @Expose
+    private float temperatureMax;
+
+
 
     public Integer getTime() {
         return time;
@@ -210,6 +237,20 @@ public class Report implements Serializable {
 
 
     //ToDo: get formatted moon phase
+    public String[] getFormattedMoonPhase(){
+
+        return null;
+    }
+
+    public void setMoonPhase(Double moonPhase) {
+        this.moonPhase = moonPhase;
+    }
+
+    public double getMoonPhase() {
+        return moonPhase;
+    }
+
+
 //    The fractional part of the lunation number during the given day: a value of 0 corresponds to a new moon, 0.25 to a first quarter moon, 0.5 to a full moon, and 0.75 to a last quarter moon. (The ranges in between these represent waxing crescent, waxing gibbous, waning gibbous, and waning crescent moons, respectively.)
     //TODO: format wind SI converter?
     //TODO: format pressure

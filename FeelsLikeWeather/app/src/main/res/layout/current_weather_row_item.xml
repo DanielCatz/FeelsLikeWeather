@@ -3,87 +3,88 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
-    android:orientation="vertical" android:layout_width="match_parent"
     android:id="@+id/current_weather_root"
-    android:background="@android:color/darker_gray"
+    android:layout_width="match_parent"
     android:layout_height="150dp"
-    android:padding="15dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
     android:layout_marginTop="15dp"
-    android:layout_marginLeft="7dp"
-    android:layout_marginRight="7dp">
+    android:background="@android:color/darker_gray"
+    android:orientation="vertical"
+    android:padding="15dp">
 
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
-                    android:text="STATE"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/txt_cur_state"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:text="CITY"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="STATE" />
+
+                <TextView
                     android:id="@+id/txt_cur_city"
-                    android:layout_weight="1" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="CITY" />
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/img_cur_icon"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                app:srcCompat="@mipmap/ic_launcher"
-                android:id="@+id/img_cur_icon"
                 android:layout_weight="0"
-                android:scaleType="fitXY" />
+                android:scaleType="fitXY"
+                app:srcCompat="@mipmap/ic_launcher" />
 
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
         <TextView
-            android:text="42"
+            android:id="@+id/txt_cur_temp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txt_cur_temp"
             android:layout_weight="1"
-            tools:text="42"
+            android:gravity="center"
+            android:text="42"
             android:textSize="36sp"
-            android:gravity="center" />
+            tools:text="42" />
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:id="@+id/current_weather_doodad_linlayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/current_weather_doodad_linlayout"></LinearLayout>
+            android:orientation="horizontal"></LinearLayout>
 
         <TextClock
+            android:id="@+id/txt_cur_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txt_cur_time"
             android:layout_weight="1" />
 
     </LinearLayout>

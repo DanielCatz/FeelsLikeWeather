@@ -23,7 +23,7 @@ import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
 import com.example.kylie.feelslikeweather.presenters.MainActivityPresenter;
 import com.example.kylie.feelslikeweather.rest.WeatherService;
 import com.example.kylie.feelslikeweather.screens.CurrentWeatherScreen;
-import com.example.kylie.feelslikeweather.ui.CurrentWeatherAdapter;
+import com.example.kylie.feelslikeweather.ui.recycleradapters.CurrentWeatherAdapter;
 import com.example.kylie.feelslikeweather.utils.Print;
 import com.github.brnunes.swipeablerecyclerview.SwipeableRecyclerViewTouchListener;
 

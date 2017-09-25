@@ -6,10 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.kylie.feelslikeweather.R;
+import com.example.kylie.feelslikeweather.models.wrappers.DailyWrapper;
+import com.example.kylie.feelslikeweather.models.wrappers.Report;
 import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
 import com.example.kylie.feelslikeweather.screens.CurrentWeatherScreen;
 import com.example.kylie.feelslikeweather.screens.WeatherOverviewScreen;
+import com.example.kylie.feelslikeweather.ui.viewholders.BannerViewHolder;
 import com.example.kylie.feelslikeweather.ui.viewholders.CurrentWeatherViewHolder;
+import com.example.kylie.feelslikeweather.ui.viewholders.DailyWeatherViewHolder;
 import com.example.kylie.feelslikeweather.ui.viewholders.DetailedWeatherViewHolder;
 import com.example.kylie.feelslikeweather.ui.viewholders.ICompositeViewHolder;
 import com.example.kylie.feelslikeweather.utils.Print;
@@ -28,6 +32,7 @@ public class CompositeWeatherAdapter  extends RecyclerView.Adapter {
     private static final int BANNER = 0;
     private static final int HOURS =2 ;
     private static final int DAY =3 ;
+    private static final int DAILY = 4;
     private ArrayList<Object> components;
     private WeatherOverviewScreen screen;
 
@@ -43,7 +48,9 @@ public class CompositeWeatherAdapter  extends RecyclerView.Adapter {
         if (components.get(position) instanceof WeatherWrapper) {
             return DAY;
         } else if (components.get(position) instanceof String) {
-            return HOURS;
+            return BANNER;
+        } else if (components.get(position) instanceof Report) {
+            return DAILY;
         }
         return BANNER;
     }
@@ -59,6 +66,14 @@ public class CompositeWeatherAdapter  extends RecyclerView.Adapter {
             case DAY:
                 v = inflater.inflate(R.layout.detailed_weather_row_item,parent,false);
                 holder = new DetailedWeatherViewHolder(v,screen);
+                break;
+            case BANNER:
+                v = inflater.inflate(R.layout.banner_row_item,parent,false);
+                holder = new BannerViewHolder(v,screen);
+                break;
+            case DAILY:
+                v = inflater.inflate(R.layout.daily_row_item,parent,false);
+                holder = new DailyWeatherViewHolder(v,screen);
                 break;
             default:
                 v = inflater.inflate(R.layout.detailed_weather_row_item,parent,false);
@@ -76,6 +91,14 @@ public class CompositeWeatherAdapter  extends RecyclerView.Adapter {
             case DAY:
                 DetailedWeatherViewHolder dvh = (DetailedWeatherViewHolder) holder;
                 dvh.bindData((WeatherWrapper)components.get(position));
+                break;
+            case BANNER:
+                BannerViewHolder bvh = (BannerViewHolder) holder;
+                bvh.bindData((String)components.get(position));
+                break;
+            case DAILY:
+                DailyWeatherViewHolder dlvh = (DailyWeatherViewHolder) holder;
+                dlvh.bindData((Report)components.get(position));
                 break;
             default:
                 Print.out("default");
