@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#32395E</color>
+    <color name="colorPrimaryDark">#495179</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorClearDay">#f1c40f</color>
+    <color name="colorClearNight">#2c3e50</color>
+    <color name="colorCloudy">#95a5a6</color>
+    <color name="colorFog">#9da4b2</color>
+    <color name="colorPartlyCloudyDay">#65c1ff</color>
+    <color name="colorPartlyCloudyNight">#99a0a7</color>
+    <color name="colorRain">#3498db</color>
+    <color name="colorSleet">#bdc3c7</color>
+    <color name="colorSnow">#ffffff</color>
+    <color name="colorWind">#2ecc71</color>
+
+    <color name="colorPrimary2">#32395E</color>
+    <color name="colorPrimaryDark2">#495179</color>
+    <color name="colorAccent2">#FF4081</color>
+    <color name="colorClearDay2">#f1c40f</color>
+    <color name="colorClearNight2">#2c3e50</color>
+    <color name="colorCloudy2">#95a5a6</color>
+    <color name="colorFog2">#9da4b2</color>
+    <color name="colorPartlyCloudyDay2">#65c1ff</color>
+    <color name="colorPartlyCloudyNight2">#34495e</color>
+    <color name="colorRain2">#3498db</color>
+    <color name="colorSleet2">#bdc3c7</color>
+    <color name="colorSnow2">#ffffff</color>
+    <color name="colorWind2">#2ecc71</color>
+</resources>
