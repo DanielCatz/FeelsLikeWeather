@@ -2,6 +2,7 @@ package com.example.kylie.feelslikeweather.presenters;
 
 import com.example.kylie.feelslikeweather.models.wrappers.WeatherWrapper;
 import com.example.kylie.feelslikeweather.screens.WeatherOverviewScreen;
+import com.example.kylie.feelslikeweather.utils.Print;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,7 @@ public class WeatherOverviewPresenter {
         components.add(weather.getDaily().getSummary());//week
         for(int i = 0; i< 8; i++){//today plus next seven days
             components.add(weather.getDaily().getDays().get(i));
+            Print.out(weather.getDaily().getDays().get(i).getSummary());
         }
         components.add("POWERED BY DARK SKY");
         screen.initializeScreen(components);

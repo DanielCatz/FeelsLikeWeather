@@ -30,6 +30,12 @@ public class BannerViewHolder extends RecyclerView.ViewHolder {
         container.setBackgroundColor(ContextCompat.getColor(container.getContext(),R.color.colorPrimary));
     }
 
+    public void bindData(String info, int position){
+
+        banner.setText(info);
+        container.setBackgroundColor(ContextCompat.getColor(container.getContext(),R.color.colorPrimary));
+    }
+
 
 
 }

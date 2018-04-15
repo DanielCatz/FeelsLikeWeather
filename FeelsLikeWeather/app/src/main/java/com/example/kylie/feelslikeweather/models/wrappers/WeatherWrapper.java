@@ -55,15 +55,6 @@ public class WeatherWrapper implements Serializable {
         this.location = location;
     }
 
-
-
-
-
-
-
-
-
-
     public WeatherWrapper(DarkSkyForecast forecast) {
         //TODO: May need this for detailed view
         this.forecast = forecast;

@@ -63,6 +63,14 @@ public class DailyWeatherViewHolder extends RecyclerView.ViewHolder {
                 setWeatherImage();
             }
         }
+    public void bindData(Report forecast,int position) {
+        this.forecast= forecast;
+        if(forecast!=null) {
+            setTextValues();
+            setCardStyleByWeather(forecast.getFormattedWeatherString());
+            setWeatherImage();
+        }
+    }
 
         private void initializeTextViews(View view){
             textViews = new ArrayList<>();
@@ -84,6 +92,8 @@ public class DailyWeatherViewHolder extends RecyclerView.ViewHolder {
 
         private void setCardStyleByWeather(String weather){
             Print.out(weather);
+            Print.out(R.color.colorClearDay);
+            Print.out(ContextCompat.getColor(container.getContext(),R.color.colorClearDay));
             switch (weather){
 
                 case "clearday":
