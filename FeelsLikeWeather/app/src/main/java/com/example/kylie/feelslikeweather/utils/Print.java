@@ -30,4 +30,8 @@ public class Print {
         origin= origin.substring(origin.indexOf('('));
         Log.wtf(origin,String.valueOf(message));
     }
+
+    public static void store(String things){
+        Log.wtf("Woot", "Thing");
+    }
 }
